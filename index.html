@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d0d0f" />
+  <title>Discipline — Weekly Habit & Analytics Tracker</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" href="icon-512.png" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="top-bar">
+      <div>
+        <h1>Discipline Tracker</h1>
+        <p class="subtitle" id="weekLabel">Weekly Habit Grid & Performance</p>
+      </div>
+      <div class="header-actions">
+        <a href="./discipline-app.apk" download class="btn btn-apk" title="Download Android APK">
+          ⬇ Download APK
+        </a>
+        <button id="resetWeekBtn" class="btn btn-ghost" title="Uncheck all boxes for a new week">
+          Reset Week
+        </button>
+      </div>
+    </header>
+
+    <!-- Add New Task Form -->
+    <section class="card add-task-card">
+      <form id="taskForm" class="task-form">
+        <input
+          type="text"
+          id="taskInput"
+          placeholder="Add a daily task (e.g., Daily 30 min Exercise)..."
+          maxlength="50"
+          required
+        />
+        <button type="submit" class="btn btn-primary">+ Add Task</button>
+      </form>
+    </section>
+
+    <!-- 7-Day Checkbox Matrix (Sunday to Saturday) -->
+    <section class="card matrix-card">
+      <div class="card-header">
+        <h2>Weekly Checklist (Sun – Sat)</h2>
+        <span class="badge" id="overallScoreBadge">0 / 0 Done</span>
+      </div>
+      <div class="table-wrapper">
+        <table class="habit-table">
+          <thead>
+            <tr>
+              <th class="task-col">Task / Goal</th>
+              <th>Sun</th>
+              <th>Mon</th>
+              <th>Tue</th>
+              <th>Wed</th>
+              <th>Thu</th>
+              <th>Fri</th>
+              <th>Sat</th>
+              <th>Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="habitTableBody">
+            <!-- Rows injected dynamically by app.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Activities Progress Breakdown -->
+    <section class="card">
+      <div class="card-header">
+        <h2>Activities Breakdown</h2>
+        <span class="muted">Weekly Completion</span>
+      </div>
+      <div id="activitiesList" class="activities-list">
+        <!-- Progress bars injected dynamically -->
+      </div>
+    </section>
+
+    <!-- Charts Grid -->
+    <div class="charts-grid">
+      <!-- Line/Area Graph -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Tasks Completed Per Day</h2>
+          <span class="muted">7-Day Trend</span>
+        </div>
+        <div class="chart-box">
+          <canvas id="weeklyLineChart"></canvas>
+        </div>
+      </section>
+
+      <!-- Bar Graph -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Daily Consistency (%)</h2>
+          <span class="muted">Daily Score</span>
+        </div>
+        <div class="chart-box">
+          <canvas id="dailyBarChart"></canvas>
+        </div>
+      </section>
+    </div>
+
+    <!-- Automated Weekly Analysis -->
+    <section class="card analysis-card">
+      <div class="card-header">
+        <h2>Weekly Analysis</h2>
+        <span class="badge badge-accent" id="gradeBadge">Grade: --</span>
+      </div>
+      <div id="weeklyAnalysisContent" class="analysis-grid">
+        <!-- Analysis metrics injected dynamically -->
+      </div>
+      <p id="analysisSummaryText" class="analysis-summary"></p>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
