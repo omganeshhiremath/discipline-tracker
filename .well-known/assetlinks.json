@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.omganeshhiremath.twa",
+        "sha256_cert_fingerprints": ["15:4D:5E:77:6D:E9:27:74:4B:47:EF:A3:42:0B:97:2F:D2:B7:3D:2E:38:E0:0D:99:42:96:97:9C:6C:56:21:E2"]
+      }
+    }]
