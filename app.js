@@ -1,20 +1,572 @@
-const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const STATE_KEY = "discipline_super_state_v3";
+]const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const STATE_KEY = "discipline_super_state_v4";
 
-const QUOTES = [
-  "You are not weak. Work harder.",
-  "Discipline is choosing between what you want now and what you want most.",
-  "Nobody cares. Work harder.",
-  "Pain is temporary. Pride is forever.",
-  "Don't stop when you're tired. Stop when you're done.",
-  "Your future self is watching you right now through memories.",
-  "Excuses don't build empires. Consistency does.",
-  "Outwork everyone who doubted you.",
-  "Small daily wins create unstoppable momentum.",
-  "Master your habits or your habits will master you.",
-  "Suffer the pain of discipline or suffer the pain of regret.",
-  "Every rep, every page, every hour builds your empire."
-];
+// =========================================================================
+// ALL 500+ MOTIVATIONAL QUOTES FROM YOUR quotes.txt
+// Locked all day; advances automatically +1 at 12:01 AM with your Streak!
+// =========================================================================
+const RAW_QUOTES_TEXT = `
+"Discipline is choosing what you want most over what you want now."
+"Small steps every day beat big plans never started."
+"You don't need motivation. You need a routine."
+"Do it tired. Do it bored. Do it anyway."
+"Your future self is watching what you do today."
+"Consistency beats intensity every single time."
+"Show up even when you don't feel like it."
+"Every checked box is a vote for the person you want to become."
+"Discipline is a muscle. Train it daily."
+"Today's effort is tomorrow's confidence."
+"Don't wait for the mood. Create the momentum."
+"The pain of discipline is lighter than the pain of regret."
+"Be the person who keeps promises to yourself."
+"One more rep. One more page. One more hour."
+"Winners are built in the boring moments."
+"Start now. Perfect later."
+"You are one habit away from a different life."
+"Stop negotiating with your alarm clock."
+"Hard days build strong people."
+"Progress is quiet, but it adds up loudly."
+"Nobody is coming to save you. Get up and build it."
+"Your habits are writing your future. Edit them carefully."
+"Doing it badly beats not doing it at all."
+"Excuses feel comfortable, but they build nothing."
+"The version of you that you want is waiting on the other side of today's work."
+"Discipline is self-respect in action."
+"Make it a rule: no zero days."
+"Win the morning, and you win the day."
+"Motivation gets you started. Habit keeps you going."
+"Do what needs to be done before you want to do it."
+"Every day you skip makes the next skip easier. Break the chain of excuses."
+"Be stronger than your strongest excuse."
+"You become what you repeatedly do."
+"Pressure makes diamonds, and daily effort makes champions."
+"Don't count the days. Make the days count."
+"The grind is quiet. The results are loud."
+"Your goals don't care about your mood."
+"Choose the hard path today so life is easier tomorrow."
+"A little progress each day adds up to big results."
+"Quit waiting. Start working."
+"Discipline today, freedom tomorrow."
+"Be consistent when nobody is watching."
+"Don't stop when you're tired. Stop when you're done."
+"Make your routine so strong that excuses can't fit inside it."
+"Follow your plan, not your feelings."
+"The easiest time to quit is right before the breakthrough."
+"Today is a perfect day to be better than yesterday."
+"Your only competition is who you were yesterday."
+"Success is a pile of small disciplines done daily."
+"Be so consistent that doubt gets bored and leaves."
+"If it matters to you, you will find a way. If not, you'll find an excuse."
+"Don't break the streak. Protect it like it's gold."
+"Every streak starts with day one. Make today day one."
+"Your streak is proof that you keep your word."
+"A streak isn't built in a week. It's built one day at a time."
+"Missed a day? Fine. Never miss two."
+"One day or day one. You decide."
+"The streak you protect will protect your future."
+"Fire up the streak, and keep the flame alive."
+"Keep the fire burning, one day at a time."
+"Every sunrise is another chance to extend the streak."
+"Streaks are made by people who refuse to quit."
+"Focus is saying no to a hundred good things so you can do one great thing."
+"Put your phone down and pick your future up."
+"Deep work today, deep results tomorrow."
+"Distraction is the enemy of dreams."
+"Where your attention goes, your life goes."
+"One task. Full focus. Zero excuses."
+"Silence the noise and hear your goals."
+"You can't build a big life with scattered effort."
+"Concentrate your energy like a laser, not a flashlight."
+"Mute the world for an hour and build something."
+"Attention is your most valuable currency. Spend it wisely."
+"Do one thing at a time, and do it well."
+"Focus on the next step, not the whole staircase."
+"Clear mind, clear goals, clear progress."
+"Scrolling won't build your future. Working will."
+"The world is loud. Stay locked in."
+"Eliminate distractions, and watch your progress speed up."
+"Your focus today decides your results next year."
+"A focused hour beats a distracted day."
+"Lock in. Block out. Level up."
+"Study now, so your future self can thank you."
+"Every page you read is a step ahead of who you were."
+"Learning is the only investment that always pays."
+"Thirty minutes of study a day will change your life in a year."
+"Knowledge builds slowly, then all at once."
+"Don't memorize the answers. Understand the questions."
+"Open the book. The rest follows."
+"Exams are temporary. What you learn stays."
+"Hard subjects are just easy subjects you haven't practiced enough."
+"Be a student for life, and you'll never stop growing."
+"The more you learn, the more doors open."
+"Smart is not born. Smart is built, one hour at a time."
+"Revise today, relax on result day."
+"Today's homework is tomorrow's advantage."
+"Study like your dream depends on it, because it does."
+"Your brain grows every time you struggle with something new."
+"Confusion is the first step to understanding."
+"Keep learning, keep leveling up."
+"Questions are the start of every discovery."
+"A good student isn't the one who knows it all, but the one who keeps trying."
+"Code a little every day, and one day you'll build anything."
+"Every bug you fix makes you a better developer."
+"Don't just watch tutorials. Build something."
+"Great programmers aren't born. They're debugged."
+"Ship it, learn from it, improve it."
+"Today's error message is tomorrow's experience."
+"Write code today that your future self will thank you for."
+"One line at a time, you can build an empire."
+"Practice builds skill, and skill builds opportunity."
+"The best developers are the ones who never stop practicing."
+"Failing tests are just lessons in disguise."
+"Build projects, break things, and learn fast."
+"Skills are built in the dark, and the results show in the light."
+"Keep coding, keep learning, keep growing."
+"Master the basics, and the advanced becomes easy."
+"Your body can handle almost anything. It's your mind you have to convince."
+"Sweat today, shine tomorrow."
+"The workout you skip is the one you needed most."
+"Strong body, strong mind, strong life."
+"Don't wish for a better body. Work for it."
+"Train like it matters, because it does."
+"The first mile is always the hardest. Keep going."
+"You never regret a workout. You only regret skipping it."
+"Stronger than yesterday, weaker than tomorrow."
+"Your health is your wealth. Invest daily."
+"Move your body, and your mind will follow."
+"Get up, get moving, get better."
+"Every rep builds more than muscle. It builds character."
+"Pain is temporary. Pride lasts."
+"Run when you want to quit."
+"Take care of your body. It's the only place you have to live."
+"Fitness is not a phase. It's a lifestyle."
+"A 30-minute workout is only 2% of your day. No excuses."
+"Be proud of every step you take toward a healthier you."
+"Your body keeps the score of every effort you make."
+"Rest if you must, but never quit."
+"Sleep well, eat well, train hard, repeat."
+"Failure is just feedback. Take it and try again."
+"Fall seven times, stand up eight."
+"A setback is a setup for a comeback."
+"The strongest people are the ones who rise after every fall."
+"You haven't failed until you stop trying."
+"Scars are proof that you kept going."
+"Every master was once a disaster."
+"Mistakes mean you're trying. Keep trying."
+"Be patient with yourself. Growth takes time."
+"Rock bottom is a solid foundation to build on."
+"Storms make trees take deeper roots."
+"Tough times don't last, but tough people do."
+"Hard moments are shaping you, not breaking you."
+"The comeback is always stronger than the setback."
+"Don't let one bad day become a bad week."
+"If you fall today, get up tomorrow with more fire."
+"Courage is getting back up when everything says stay down."
+"The only real failure is not learning from it."
+"Get knocked down, get back up, and go harder."
+"You are stronger than you think and braver than you feel."
+"Your struggle is building the person your dreams need."
+"Resilience is built in the moments you wanted to quit."
+"You've survived every bad day so far. Keep going."
+"Quitting is permanent. Resting is not."
+"Turn your pain into progress."
+"Breakdown today, breakthrough tomorrow."
+"Believe in yourself even when no one else does."
+"Your mindset is your superpower."
+"Think like a winner, then act like one."
+"If you can dream it, you can plan it. If you can plan it, you can do it."
+"Negative thoughts are visitors. Don't give them a room."
+"Replace 'I can't' with 'I'll find a way.'"
+"What you think about, you become."
+"Your attitude decides your altitude."
+"Don't let a bad moment turn into a bad mindset."
+"Be your own biggest fan."
+"Belief comes first, results follow."
+"A strong mind turns obstacles into stepping stones."
+"Talk to yourself like someone you love."
+"Confidence is built by keeping small promises to yourself."
+"Your mind is a garden. Plant good thoughts."
+"You are capable of more than you imagine."
+"Doubt kills more dreams than failure ever will."
+"The mind quits first. Don't let it win."
+"Think big, start small, move fast."
+"Positive energy attracts positive results."
+"You don't need to be fearless. Just don't let fear drive."
+"Your thoughts shape your reality. Choose wisely."
+"Time is the one thing you can't earn back. Use it well."
+"You have the same 24 hours as everyone who's winning."
+"Stop saying you don't have time. You have priorities."
+"Spend your time like it's money, and invest it in your dreams."
+"Every minute wasted is a minute you can't get back."
+"Plan your day or someone else will plan it for you."
+"Don't be busy. Be productive."
+"Today will never come again. Make it count."
+"Five minutes of effort is better than five hours of regret."
+"Time passes either way. Make it pass with progress."
+"The best time to start was yesterday. The next best time is now."
+"A day well spent brings a peaceful night."
+"Use your time to build, not just to pass."
+"Hours become years faster than you think. Spend them wisely."
+"Do the most important thing first."
+"Your schedule reveals your priorities."
+"Be early, be ready, be relentless."
+"Make every hour a step toward your goal."
+"Wake up with purpose, and sleep with pride."
+"The early morning belongs to those who want more."
+"Get up. Dress up. Show up."
+"A good morning routine sets the tone for greatness."
+"While others sleep, you build your future."
+"Rise before the excuses do."
+"Morning discipline is the foundation of a successful day."
+"The first hour of your day is the rudder of the day."
+"Make your bed, make your day."
+"Start your day with a win, and the rest will follow."
+"Every morning is a fresh page. Write something great."
+"The sunrise is proof that you can start again."
+"Wake up and be awesome."
+"Beat the sun to the grind."
+"Early to rise, early to win."
+"Finish the day strong, and tomorrow starts easy."
+"Reflect tonight, improve tomorrow."
+"Sleep is not laziness. It's recovery for greatness."
+"Close the day with gratitude and open tomorrow with purpose."
+"Before you rest, ask: did I do my best today?"
+"End the day proud of what you did."
+"Tonight's rest powers tomorrow's results."
+"Check your tasks, tick your boxes, sleep in peace."
+"A productive night starts with a prepared tomorrow."
+"Today's mistakes are tomorrow's lessons. Sleep on it."
+"Go to bed knowing you gave it your all."
+"Finish what you started, then finally rest."
+"Don't end the day with unfinished promises to yourself."
+"Goals without a plan are just wishes."
+"Set goals that scare you a little."
+"A big dream needs small daily actions."
+"Write your goals down, then go chase them."
+"Break big goals into small wins."
+"Aim high and work harder."
+"Dreams don't work unless you do."
+"Your goals are waiting. Go get them."
+"Know your why, and the how will follow."
+"Set the target, start the journey, enjoy the climb."
+"A goal without a deadline is just a dream."
+"Be so focused on your goals that nothing else matters."
+"Keep your eyes on the prize and your hands to the grind."
+"Every big achievement was once a small goal."
+"The difference between a dream and a goal is action."
+"Success starts with a decision to try."
+"Success is not luck. It's repeated effort."
+"Success is the sum of small efforts repeated day in and day out."
+"Great things never come from comfort zones."
+"Your comfort zone is a beautiful place, but nothing grows there."
+"Be uncomfortable now, be unstoppable later."
+"Growth begins where comfort ends."
+"Do something today that your future self will thank you for."
+"Do one thing every day that scares you."
+"Step out of your comfort zone and into your power."
+"What feels hard today will feel easy tomorrow."
+"The magic happens just outside your comfort zone."
+"Stretch yourself. That's how you grow."
+"Make progress, not excuses."
+"Hustle in silence and let success make the noise."
+"Work hard in silence. Let your results speak."
+"Dream big, work harder."
+"Success doesn't come to you. You go to it."
+"Nothing worth having comes easy."
+"Work until your idols become your rivals."
+"Be a rare kind of person: one who actually follows through."
+"Don't chase success. Become someone who deserves it."
+"The harder you work, the luckier you get."
+"Greatness is built daily, not found suddenly."
+"If it was easy, everyone would do it."
+"Aim to be better than you were yesterday."
+"Make today so good that yesterday gets jealous."
+"Don't be afraid to start over. It's a chance to build better."
+"You don't have to be great to start, but you have to start to be great."
+"There's no elevator to success. Take the stairs."
+"Do not let what you cannot do stop you from doing what you can."
+"No one ever drowned in sweat."
+"Hard work beats talent when talent doesn't work hard."
+"Make it happen. Shock everyone."
+"Be proud of how far you've come and focus on how far you can go."
+"Little by little, a little becomes a lot."
+"Patience is working hard while you wait."
+"Slow progress is still progress."
+"Don't rush the process. Trust it."
+"Great things take time, so give it time."
+"Rome wasn't built in a day, but they were laying bricks every hour."
+"Keep going. Your effort is invisible until it isn't."
+"Results take time. Effort takes only today."
+"Plant the seeds today, and the harvest will come."
+"Trust the process, even when it's slow."
+"The best view comes after the hardest climb."
+"Don't dig up the seed every day to check if it's growing."
+"Stay patient, stay consistent, stay hungry."
+"Growth is slow, but quitting is slower."
+"Every expert was once a beginner who didn't quit."
+"No excuses. Only results."
+"Excuses don't burn calories, finish tasks, or build futures."
+"You can have results or excuses, but not both."
+"Stop saying tomorrow. Tomorrow never comes."
+"If you want it, you'll find a way. If not, a reason."
+"Complaining doesn't change anything. Action does."
+"Don't tell me how busy you are. Show me what you've done."
+"Blame no one. Do the work."
+"The best way to get something done is to begin."
+"Procrastination is the thief of progress."
+"Done is better than perfect."
+"Don't think about it, just begin."
+"Later is a lie. Do it now."
+"Excuses are the nails used to build a house of failure."
+"Cut the excuses, keep the promises."
+"You are the only one stopping you."
+"The only way to do it is to do it."
+"You're not tired. You're uninspired. Find your why."
+"Act now. Regret nothing."
+"Take the first step. The path appears as you walk."
+"Action cures fear."
+"Begin where you are. Use what you have. Do what you can."
+"Self-discipline is self-love."
+"Respect yourself enough to do what's good for you."
+"Treat your goals like they matter, because you do."
+"You owe it to yourself to try."
+"Be proud of yourself for showing up today."
+"Take care of your mind like you take care of your phone. Recharge it."
+"You are worth the effort."
+"Love yourself enough to build a better life."
+"Your habits are a reflection of how much you value yourself."
+"You deserve the life you're working for."
+"Be kind to yourself, and keep going."
+"Don't compare your chapter one to someone else's chapter twenty."
+"Be the reason you smile tomorrow."
+"Your life changes when you decide to change it."
+"Choose growth over comfort every time."
+"Be the energy you want to attract."
+"Surround yourself with people who push you up."
+"Your circle should challenge you to grow."
+"Be around people who make your goals feel normal."
+"Inspire others by finishing what you start."
+"You are the average of the habits you keep."
+"Be the example you wish you had."
+"Lift others as you rise."
+"Good habits are the quiet architects of a great life."
+"Build habits, and habits will build you."
+"Habits shape destiny. Choose them wisely."
+"Break bad habits before they break you."
+"Replace one bad habit with one good habit today."
+"You don't rise to the level of your goals. You fall to the level of your habits."
+"First you make your habits, then your habits make you."
+"A good habit repeated becomes a superpower."
+"Make good habits easy and bad habits hard."
+"Stack small habits and watch your life level up."
+"The secret of your future is hidden in your daily routine."
+"Tiny habits, massive results."
+"Habits are the compound interest of self-improvement."
+"What you do daily matters more than what you do occasionally."
+"Start with two minutes. Momentum does the rest."
+"Courage doesn't mean you're not afraid. It means you move anyway."
+"Be brave enough to start and strong enough to finish."
+"Fear is a liar. Move forward."
+"The scariest step is the first one. Take it."
+"Do it scared."
+"Bravery is just fear that said its prayers and went to work."
+"Take the risk, or lose the chance."
+"What if it works? Try and see."
+"Every great journey starts with a single brave step."
+"Don't fear failure. Fear never trying."
+"You'll never know your limit until you push past it."
+"Believe it, then build it."
+"Sacrifice now, celebrate later."
+"Give up the short-term pleasure for the long-term win."
+"You can't have a million-dollar dream with a minimum-wage work ethic."
+"Skip the party, finish the plan."
+"Every sacrifice today is an investment in tomorrow."
+"Trade comfort for progress."
+"Say no to what's easy so you can say yes to what's great."
+"Willpower is a decision, not a feeling."
+"The things you give up today will give back tomorrow."
+"Choose discipline over regret."
+"Hunger is better than comfort when chasing a dream."
+"Let your goals cost you your excuses."
+"Reward yourself for the work, not for the wish."
+"Celebrate small wins. They're the stepping stones of success."
+"Every tick is a victory. Count them."
+"Perfect weeks are made of ordinary days done right."
+"One hundred percent today. That's all it takes."
+"Finish every day with a full checklist and a proud heart."
+"A completed checklist is a day well lived."
+"Check the box, build the habit, become the person."
+"Be proud of the small wins. They build the big ones."
+"Every task you complete is a promise you kept."
+"Tick it off and move on to the next victory."
+"When the list is done, the mind is free."
+"You can't improve what you don't track."
+"Track your habits, and you'll track your growth."
+"Level up your life, one task at a time."
+"Rank up by showing up."
+"From noob to master, it's all about repetition."
+"Master level starts with beginner effort repeated daily."
+"Grandmasters are made one day at a time."
+"Be untouchable by being unstoppable."
+"Every legend started as a beginner who kept going."
+"Climb the ranks with consistent effort, not talent alone."
+"Earn your rank every single day."
+"Become the version of yourself that others look up to."
+"The top is not a place. It's a habit."
+"Untouchable is not a title. It's a lifestyle."
+"Don't aim to be the best. Aim to be better than yesterday, every day."
+"Level 100 starts with level 1 consistency."
+"Be legendary in your own story."
+"A champion is someone who gets up when they can't."
+"Winners focus on winning. Losers focus on winners."
+"Champions train when nobody is clapping."
+"Dedication looks different when no one is watching."
+"Greatness lives on the other side of consistent effort."
+"Run your own race and be proud of your pace."
+"The difference between ordinary and extraordinary is that little extra."
+"Do something today that your future self will brag about."
+"If you're going through hell, keep going."
+"Believe you can, and you're halfway there."
+"Nothing changes if nothing changes."
+"Your time is now. Don't waste it waiting."
+"Make your future self proud."
+"Dream. Plan. Execute. Repeat."
+"You're closer than you think. Keep going."
+"The only bad workout is the one that didn't happen."
+"The best project you'll ever work on is you."
+"Don't stop now. You've come too far."
+"Keep pushing. Your breakthrough is near."
+"Today's pain is tomorrow's power."
+"Stay hungry, stay humble, stay consistent."
+"Do the work. Trust the process. Enjoy the results."
+"Your dreams are valid. Now go make them real."
+"Hard work makes dreams come true."
+"It always seems impossible until it's done."
+"You are not behind. You are on your own timeline."
+"Make today's version of you proud of yesterday's version."
+"Your goals are closer than your excuses."
+"You were built for this. Keep going."
+"The grind never lies."
+"Choose progress over perfection."
+"Be fearless in the pursuit of what sets your soul on fire."
+"Think less, do more."
+"Stay on track, even when the road gets rough."
+"Let discipline carry you when motivation leaves."
+"The only limit is the one you set yourself."
+"It's not about being the best. It's about being better than before."
+"A little discipline today saves a lot of struggle tomorrow."
+"Build the life you want, brick by brick."
+"Today's goal: don't quit."
+"No shortcuts. Just steady steps."
+"A year from now you'll wish you had started today."
+"Success is rented, and the rent is due every day."
+"Don't wait for opportunity. Create it."
+"Your best work is ahead of you."
+"Everything you want is on the other side of consistency."
+"Be relentless in the pursuit of your better self."
+"The harder the battle, the sweeter the victory."
+"Discipline turns dreams into plans, and plans into reality."
+"Keep your promises to yourself, and the world will keep its promises to you."
+"One percent better every day makes you unrecognizable in a year."
+"Own your day before it owns you."
+"What you do today can improve all your tomorrows."
+"Don't stop until you're proud."
+"Your effort will never go to waste."
+"Chase progress, not applause."
+"Give your best today and let tomorrow take care of itself."
+"Believe in the work you're putting in."
+"Quiet discipline builds loud success."
+"The hardest part is starting. The second hardest is continuing. Do both."
+"Every effort counts. Every day matters."
+"A strong routine is a strong future."
+"Get 1% better, 100% of the time."
+"Don't give up on the day. Give it everything."
+"Rise, grind, repeat."
+"Hold the line. The reward is coming."
+"Mind over mood."
+"Fall in love with the process, and results will follow."
+"Make the most of today. It's a gift."
+"Today is your chance to prove yesterday wrong."
+"Do it for the person you'll be a year from now."
+"Work now, thank yourself later."
+"Your work ethic is your legacy."
+"Be better than your last best."
+"If you commit, follow through."
+"Another day, another chance to be great."
+"Fuel your dreams with daily effort."
+"Make every day your masterpiece."
+"Let your actions be louder than your plans."
+"Turn up the discipline, turn down the excuses."
+"The grind is where legends are made."
+"Take pride in your daily progress, however small."
+"Stay committed to your decisions but flexible in your approach."
+"Persistence beats resistance."
+"Don't be afraid of slow progress. Be afraid of standing still."
+"Strive for progress, not perfection."
+"Your daily choices write your life story."
+"The best way to predict your future is to build it."
+"Never underestimate the power of showing up."
+"Success is a habit. So is failure. Choose wisely."
+"Be ruthless with your time and kind with your heart."
+"Tomorrow's success is built on today's discipline."
+"Today, you are one step closer to your dream."
+"Stay focused, stay driven, stay unstoppable."
+"A disciplined mind is a free mind."
+"Keep your head up, your standards high, and your effort higher."
+"You've got this. Go prove it."
+"Do the hard thing. Then do it again tomorrow."
+"Done is powerful. Consistent is unstoppable."
+"You've already started. Now keep going."
+"Never give up on the person you're becoming."
+"Believe in the daily grind."
+"Even the smallest step is a step forward."
+"Nobody cares. Work harder, and then they'll notice."
+"Make the effort, and the result will make sense."
+"Stop wishing. Start doing."
+"Your next level is waiting for you to earn it."
+"Respect the process, and the process will respect you."
+"What you do every day matters more than what you do once in a while."
+"Be someone who makes things happen."
+"You become unstoppable when you stop making excuses."
+"Don't just dream of success. Schedule it."
+"Your discipline will outlast your motivation."
+"Never stop becoming."
+"Dedicate yourself to being better each day."
+"Win your day, win your life."
+"A better you starts with a better today."
+"Don't be average. Be consistent."
+"Every day is a new chance to level up."
+"Keep going. The best is yet to come."
+"It's you versus you. Win."
+"You're not stuck. You're just not moving yet."
+"Make it happen, one day at a time."
+"The dream is free. The hustle is sold separately."
+"Finish strong, every single day."
+`;
+
+function parseQuotes(raw) {
+  return raw
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter((l) => l.length > 0)
+    .map((l) => l.replace(/^["“]+|["”]+$/g, ""));
+}
+
+let QUOTES_LIST = parseQuotes(RAW_QUOTES_TEXT);
+
+// Optional sync: if you also upload a quotes.txt file with additional lines later, it loads automatically
+fetch("./quotes.txt")
+  .then((r) => (r.ok ? r.text() : null))
+  .then((txt) => {
+    if (txt) {
+      const parsed = parseQuotes(txt);
+      if (parsed.length > 0) {
+        QUOTES_LIST = parsed;
+        syncStreakAndClock();
+      }
+    }
+  })
+  .catch(() => {});
 
 const BADGES_CATALOG = [
   { id: "first_step", icon: "⚡", name: "First Blood", desc: "Complete your first habit" },
@@ -28,10 +580,9 @@ const BADGES_CATALOG = [
 ];
 
 // ==========================================
-// 1. DATE & 12:01 AM ROLLOVER UTILITIES
+// 1. 12:01 AM ROLLOVER DATE HELPERS
 // ==========================================
 function getRolledDate(dateObj = new Date()) {
-  // Shifts clock back 1 minute so 12:01 AM starts the new streak/day
   return new Date(dateObj.getTime() - 60 * 1000);
 }
 
@@ -58,48 +609,34 @@ function dayDiff(prevStr, currStr) {
 }
 
 // ==========================================
-// 2. STATE INITIALIZATION & V2 MIGRATION
+// 2. STATE INITIALIZATION
 // ==========================================
 function loadInitialState() {
   const saved = JSON.parse(localStorage.getItem(STATE_KEY));
   if (saved) return saved;
 
-  // Migrate tasks & streak from v2 if user already used the previous version
   const oldTasks = JSON.parse(localStorage.getItem("discipline_tasks_v2")) || [
     { id: "t1", name: "Daily 30 min Exercise", checks: [true, true, false, false, false, false, false] },
     { id: "t2", name: "Read 20 Pages", checks: [true, false, false, false, false, false, false] },
     { id: "t3", name: "Drink 8 Glasses Water", checks: [true, true, false, false, false, false, false] }
   ];
   const oldStreak = JSON.parse(localStorage.getItem("discipline_login_streak_v1")) || { count: 1, lastDate: getDayKey() };
-
   const currentWeek = getWeekStartKey(0);
-  const migratedHabits = oldTasks.map((t, idx) => ({
-    id: t.id || "h_" + Date.now() + idx,
-    name: t.name,
-    category: idx === 0 ? "Fitness" : idx === 1 ? "Study" : "Health",
-    type: t.name.toLowerCase().includes("8 glasses") ? "qty" : "check",
-    qtyTarget: 8,
-    priority: idx === 0,
-    note: "",
-    timerMins: idx === 1 ? 25 : 0,
-    reminderTime: "",
-    activeDays: [true, true, true, true, true, true, true],
-    archived: false,
-    weekLogs: {
-      [currentWeek]: Array.isArray(t.checks) ? [...t.checks] : [false, false, false, false, false, false, false]
-    },
-    qtyLogs: {}
-  }));
 
   return {
     userName: "Warrior",
     theme: "aurora",
     accent: "pink",
+    soundEnabled: true,
     xp: 40,
     totalChecksEver: 5,
     todosCompletedEver: 0,
     timersCompletedEver: 0,
     lastCelebratedRank: "Noob",
+    quoteIndex: 0,
+    notifPromptDismissed: false,
+    lastNotifDay: "",
+    lastDangerNotifDay: "",
     streak: {
       count: oldStreak.count || 1,
       longest: oldStreak.count || 1,
@@ -107,26 +644,36 @@ function loadInitialState() {
       freezesLeft: 1,
       freezeMonth: getMonthKey()
     },
-    habits: migratedHabits,
-    todos: [
-      { id: "td_1", text: "Computer Class work" }
-    ],
+    habits: oldTasks.map((t, idx) => ({
+      id: t.id || "h_" + Date.now() + idx,
+      name: t.name,
+      category: idx === 0 ? "Fitness" : idx === 1 ? "Study" : "Health",
+      type: t.name.toLowerCase().includes("8 glasses") ? "qty" : "check",
+      qtyTarget: 8,
+      priority: idx === 0,
+      note: "",
+      timerMins: idx === 1 ? 25 : 0,
+      reminderTime: "",
+      activeDays: [true, true, true, true, true, true, true],
+      archived: false,
+      weekLogs: { [currentWeek]: Array.isArray(t.checks) ? [...t.checks] : [false, false, false, false, false, false, false] },
+      qtyLogs: {}
+    })),
+    todos: [{ id: "td_1", text: "Computer Class work" }],
     completedTodosToday: [],
-    dailyHistory: {}, // { "YYYY-MM-DD": pct }
+    dailyHistory: {},
     friends: [
       { name: "Arjun (Rival)", pct: 84, streak: 12 },
       { name: "Vikram (Rival)", pct: 68, streak: 6 }
     ],
-    reminderTime: "20:00",
-    notificationsEnabled: false
+    reminderTime: "20:00"
   };
 }
 
 let state = loadInitialState();
-let weekOffset = 0; // 0 = current week, -1 = last week, etc.
+let weekOffset = 0;
 let chartMode = "pct";
 let weeklyChart = null;
-let quoteOffset = 0;
 let lastDeletedTodo = null;
 let activeTimer = { habitId: null, totalSec: 0, remainingSec: 0, interval: null, running: false };
 
@@ -135,9 +682,150 @@ function saveState() {
 }
 
 // ==========================================
-// 3. SYNTHESIZED SOUND EFFECTS & CONFETTI
+// 3. NOTIFICATIONS & TASK + TO-DO REMINDERS
+// ==========================================
+function sendSystemNotification(title, body) {
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.ready
+      .then((reg) => {
+        reg.showNotification(title, {
+          body,
+          icon: "./icon-512.png",
+          badge: "./icon-512.png",
+          vibrate: [200, 100, 200]
+        });
+      })
+      .catch(() => {
+        new Notification(title, { body, icon: "./icon-512.png" });
+      });
+  } else {
+    new Notification(title, { body, icon: "./icon-512.png" });
+  }
+}
+
+function getPendingSummary() {
+  const todayIdx = getRolledDate().getDay();
+  const wkKey = getWeekStartKey(0);
+  const activeToday = state.habits.filter((h) => !h.archived && h.activeDays[todayIdx]);
+  const tasksLeft = activeToday.filter((h) => !h.weekLogs?.[wkKey]?.[todayIdx]).length;
+  const todosLeft = state.todos.length;
+  return { tasksLeft, todosLeft };
+}
+
+function setupNotificationPrompt() {
+  const card = document.getElementById("notifPromptCard");
+  if (!("Notification" in window)) return;
+
+  if (Notification.permission === "default" && !state.notifPromptDismissed) {
+    card.classList.remove("hidden");
+  } else {
+    card.classList.add("hidden");
+  }
+
+  if (Notification.permission === "granted") {
+    document.getElementById("notifStatusText").textContent =
+      `✅ Notifications active! Daily reminder at ${state.reminderTime} + 9:00 PM Streak Protection.`;
+  }
+}
+
+async function requestNotificationAccess() {
+  if (!("Notification" in window)) {
+    showToast("Notifications are not supported in this browser.");
+    return;
+  }
+  const perm = await Notification.requestPermission();
+  document.getElementById("notifPromptCard").classList.add("hidden");
+  if (perm === "granted") {
+    const { tasksLeft, todosLeft } = getPendingSummary();
+    sendSystemNotification(
+      "🔥 Discipline Reminders Enabled!",
+      `You have ${tasksLeft} daily task(s) and ${todosLeft} To-Do item(s) left today. Crush them before 12:01 AM!`
+    );
+    showToast("✅ Notifications allowed!");
+    setupNotificationPrompt();
+  } else {
+    showToast("⚠️ Notification permission blocked in browser/phone settings.");
+  }
+}
+
+document.getElementById("promptAllowNotifBtn").addEventListener("click", requestNotificationAccess);
+document.getElementById("promptDismissNotifBtn").addEventListener("click", () => {
+  state.notifPromptDismissed = true;
+  saveState();
+  document.getElementById("notifPromptCard").classList.add("hidden");
+});
+
+document.getElementById("enableNotifBtn").addEventListener("click", () => {
+  state.reminderTime = document.getElementById("dailyReminderTimeInput").value || "20:00";
+  saveState();
+  requestNotificationAccess();
+});
+
+document.getElementById("testNotifBtn").addEventListener("click", () => {
+  if (Notification.permission !== "granted") {
+    requestNotificationAccess();
+    return;
+  }
+  const { tasksLeft, todosLeft } = getPendingSummary();
+  sendSystemNotification(
+    "⚡ Discipline Daily Check-In",
+    `Reminder: Complete your ${tasksLeft} remaining daily task(s) and ${todosLeft} To-Do item(s) before 12:01 AM!`
+  );
+  showToast("🔔 Reminder notification sent!");
+});
+
+function checkScheduledReminders() {
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, "0");
+  const mm = String(now.getMinutes()).padStart(2, "0");
+  const currentHHMM = `${hh}:${mm}`;
+  const todayKey = getDayKey(now);
+  const { tasksLeft, todosLeft } = getPendingSummary();
+
+  if (tasksLeft === 0 && todosLeft === 0) return;
+
+  // 1. User's chosen daily reminder time
+  if (currentHHMM === state.reminderTime && state.lastNotifDay !== todayKey) {
+    state.lastNotifDay = todayKey;
+    saveState();
+    sendSystemNotification(
+      "⏰ Time to Complete Today's Tasks & To-Dos!",
+      `You still have ${tasksLeft} daily habit(s) and ${todosLeft} To-Do item(s) waiting. Finish strong!`
+    );
+  }
+
+  // 2. 9:00 PM Streak-in-Danger Alert
+  if (now.getHours() === 21 && now.getMinutes() === 0 && state.lastDangerNotifDay !== todayKey) {
+    state.lastDangerNotifDay = todayKey;
+    saveState();
+    sendSystemNotification(
+      `⚠️ ${state.streak.count}-Day Streak in Danger!`,
+      `Finish your ${tasksLeft} daily task(s) and ${todosLeft} To-Do item(s) before 12:01 AM!`
+    );
+  }
+
+  // 3. Per-habit custom reminder times
+  const todayIdx = getRolledDate(now).getDay();
+  const wkKey = getWeekStartKey(0);
+  state.habits.forEach((h) => {
+    if (!h.archived && h.activeDays[todayIdx] && h.reminderTime === currentHHMM) {
+      const done = h.weekLogs?.[wkKey]?.[todayIdx];
+      const tag = `${todayKey}_${h.id}`;
+      if (!done && h._lastAlert !== tag) {
+        h._lastAlert = tag;
+        sendSystemNotification(`🔔 Habit Reminder: ${h.name}`, h.note || "Complete this task now to keep your streak alive!");
+      }
+    }
+  });
+}
+
+// ==========================================
+// 4. SOUND EFFECTS, CONFETTI & STANDALONE CHECK
 // ==========================================
 function playTone(type = "check") {
+  if (state.soundEnabled === false) return;
   try {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     const ctx = new AudioCtx();
@@ -145,7 +833,6 @@ function playTone(type = "check") {
     const gain = ctx.createGain();
     osc.connect(gain);
     gain.connect(ctx.destination);
-
     const now = ctx.currentTime;
     if (type === "check") {
       osc.type = "sine";
@@ -155,7 +842,7 @@ function playTone(type = "check") {
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
       osc.start(now);
       osc.stop(now + 0.15);
-    } else if (type === "fanfare") {
+    } else {
       osc.type = "triangle";
       osc.frequency.setValueAtTime(440, now);
       osc.frequency.setValueAtTime(554, now + 0.1);
@@ -174,7 +861,6 @@ function launchConfetti(count = 65) {
   const ctx = canvas.getContext("2d");
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-
   const colors = ["#ff2e88", "#ff6a45", "#00d4b6", "#ffbe3b", "#8b5cf6", "#ffffff"];
   const pieces = Array.from({ length: count }, () => ({
     x: Math.random() * canvas.width,
@@ -210,18 +896,13 @@ function launchConfetti(count = 65) {
 
 function showToast(msg, withUndo = false) {
   const bar = document.getElementById("toastBar");
-  const text = document.getElementById("toastMessage");
-  const undoBtn = document.getElementById("toastUndoBtn");
-  text.textContent = msg;
-  undoBtn.classList.toggle("hidden", !withUndo);
+  document.getElementById("toastMessage").textContent = msg;
+  document.getElementById("toastUndoBtn").classList.toggle("hidden", !withUndo);
   bar.classList.remove("hidden");
   clearTimeout(bar._timer);
   bar._timer = setTimeout(() => bar.classList.add("hidden"), 3500);
 }
 
-// ==========================================
-// 4. STANDALONE APP DETECTION & THEME ENGINE
-// ==========================================
 function applyEnvironmentAndTheme() {
   const isStandalone =
     window.matchMedia("(display-mode: standalone)").matches ||
@@ -229,23 +910,24 @@ function applyEnvironmentAndTheme() {
     document.referrer.includes("android-app://");
 
   if (isStandalone) {
-    document.getElementById("websiteShowcase").classList.add("hidden");
+    document.getElementById("webApkPill").classList.add("hidden");
   }
 
   document.documentElement.setAttribute("data-theme", state.theme || "aurora");
   document.documentElement.setAttribute("data-accent", state.accent || "pink");
   document.getElementById("userNameInput").value = state.userName || "Warrior";
   document.getElementById("dailyReminderTimeInput").value = state.reminderTime || "20:00";
+  document.getElementById("toggleSoundBtn").textContent =
+    state.soundEnabled === false ? "🔇 Sound: OFF" : "🔊 Sound: ON";
 }
 
 // ==========================================
-// 5. 12:01 AM STREAK ENGINE, FREEZE & QUOTES
+// 5. 12:01 AM STREAK +1 & LOCKED DAILY QUOTE
 // ==========================================
 function syncStreakAndClock() {
   const todayKey = getDayKey();
   const monthKey = getMonthKey();
 
-  // Replenish 1 monthly Streak Freeze at start of a new month
   if (state.streak.freezeMonth !== monthKey) {
     state.streak.freezeMonth = monthKey;
     state.streak.freezesLeft = 1;
@@ -253,21 +935,24 @@ function syncStreakAndClock() {
 
   const diff = dayDiff(state.streak.lastDate, todayKey);
   if (diff === 1) {
+    // Streak advances +1 after 12:01 AM -> unlock the next motivational quote!
     state.streak.count += 1;
     state.streak.lastDate = todayKey;
+    state.quoteIndex = ((state.quoteIndex || 0) + 1) % QUOTES_LIST.length;
     if (state.streak.count > state.streak.longest) {
       state.streak.longest = state.streak.count;
     }
-    showToast(`🔥 Streak increased to ${state.streak.count} days!`);
+    showToast(`🔥 Streak +1 (${state.streak.count} Days) & New Daily Quote Unlocked!`);
   } else if (diff > 1) {
     if (diff === 2 && state.streak.freezesLeft > 0) {
-      // Automatically consume Streak Freeze to save a 1-day miss
       state.streak.freezesLeft -= 1;
       state.streak.lastDate = todayKey;
-      showToast("❄️ Monthly Streak Freeze saved your streak!");
+      state.quoteIndex = ((state.quoteIndex || 0) + 1) % QUOTES_LIST.length;
+      showToast("❄️ Monthly Streak Freeze protected your streak!");
     } else {
       state.streak.count = 1;
       state.streak.lastDate = todayKey;
+      state.quoteIndex = ((state.quoteIndex || 0) + 1) % QUOTES_LIST.length;
     }
   }
 
@@ -278,21 +963,32 @@ function syncStreakAndClock() {
   document.getElementById("longestStreakStat").textContent = state.streak.longest;
   document.getElementById("freezeVaultStat").textContent = state.streak.freezesLeft;
 
-  // Daily Quote based on rolled day index
-  const [y, m, d] = todayKey.split("-").map(Number);
-  const dayNum = Math.floor(Date.UTC(y, m - 1, d) / 86400000);
-  const qIdx = (dayNum + quoteOffset) % QUOTES.length;
-  document.getElementById("dailyQuoteText").textContent = `"${QUOTES[qIdx]}"`;
+  const qIdx = (state.quoteIndex || 0) % QUOTES_LIST.length;
+  const activeQuote = QUOTES_LIST[qIdx];
+  document.getElementById("quoteCounterLabel").textContent =
+    `DAILY QUOTE #${qIdx + 1}/${QUOTES_LIST.length} • CHANGES AT 12:01 AM`;
+  document.getElementById("dailyQuoteText").textContent = `"${activeQuote}"`;
 
-  // Live countdown to 12:01 AM rollover
   const now = new Date();
   const nextRollover = new Date(now);
   nextRollover.setHours(24, 1, 0, 0);
   const minsLeft = Math.max(1, Math.floor((nextRollover - now) / 60000));
-  const hrs = Math.floor(minsLeft / 60);
-  const mins = minsLeft % 60;
-  document.getElementById("resetCountdownText").textContent = `Next rollover in ${hrs}h ${mins}m (12:01 AM)`;
+  document.getElementById("resetCountdownText").textContent =
+    `Next streak +1 & quote in ${Math.floor(minsLeft / 60)}h ${minsLeft % 60}m (12:01 AM)`;
 }
+
+document.getElementById("useFreezeBtn").addEventListener("click", () => {
+  if (state.streak.freezesLeft <= 0) {
+    showToast("No Monthly Streak Freezes left!");
+    return;
+  }
+  state.streak.freezesLeft -= 1;
+  state.streak.lastDate = getDayKey();
+  saveState();
+  syncStreakAndClock();
+  document.getElementById("streakDangerBanner").classList.add("hidden");
+  showToast("❄️ Streak Freeze applied for tonight!");
+});
 
 // ==========================================
 // 6. XP & RPG LEVEL SYSTEM
@@ -317,17 +1013,13 @@ function renderXPBar() {
 }
 
 // ==========================================
-// 7. HABIT MANAGEMENT & WEIGHTED SCORING
+// 7. 7-DAY HABIT GRID & SCORING
 // ==========================================
 function ensureWeekLog(habit, wkKey) {
   if (!habit.weekLogs) habit.weekLogs = {};
-  if (!habit.weekLogs[wkKey]) {
-    habit.weekLogs[wkKey] = [false, false, false, false, false, false, false];
-  }
+  if (!habit.weekLogs[wkKey]) habit.weekLogs[wkKey] = [false, false, false, false, false, false, false];
   if (!habit.qtyLogs) habit.qtyLogs = {};
-  if (!habit.qtyLogs[wkKey]) {
-    habit.qtyLogs[wkKey] = [0, 0, 0, 0, 0, 0, 0];
-  }
+  if (!habit.qtyLogs[wkKey]) habit.qtyLogs[wkKey] = [0, 0, 0, 0, 0, 0, 0];
 }
 
 function computeWeekMetrics(wkKey) {
@@ -358,16 +1050,7 @@ function computeWeekMetrics(wkKey) {
   const totalPossible = dailyWeightedPossible.reduce((a, b) => a + b, 0);
   const overallPct = totalPossible > 0 ? Math.round((totalEarned / totalPossible) * 100) : 0;
 
-  return {
-    activeHabits,
-    dailyWeightedEarned,
-    dailyWeightedPossible,
-    dailyRawDone,
-    dailyPercentages,
-    totalEarned,
-    totalPossible,
-    overallPct
-  };
+  return { activeHabits, dailyWeightedEarned, dailyWeightedPossible, dailyRawDone, dailyPercentages, totalEarned, totalPossible, overallPct };
 }
 
 function toggleHabitCheck(habitId, dayIdx) {
@@ -393,16 +1076,14 @@ function toggleHabitCheck(habitId, dayIdx) {
     awardXP(habit.priority ? -20 : -10);
   }
 
-  // Record today's score into dailyHistory for the GitHub heatmap
-  const todayRolled = getRolledDate();
-  const todayDayIdx = todayRolled.getDay();
+  const todayDayIdx = getRolledDate().getDay();
   if (weekOffset === 0 && dayIdx === todayDayIdx) {
     const m = computeWeekMetrics(wkKey);
     state.dailyHistory[getDayKey()] = m.dailyPercentages[todayDayIdx];
     if (m.dailyPercentages[todayDayIdx] === 100 && m.dailyWeightedPossible[todayDayIdx] > 0) {
-      launchConfetti(55);
+      launchConfetti(60);
       playTone("fanfare");
-      showToast("🔥 100% Daily Discipline Completed!");
+      showToast("🔥 100% Daily Tasks Completed!");
     }
   }
 
@@ -434,11 +1115,25 @@ function moveHabitOrder(habitId, dir) {
   const idx = state.habits.findIndex((h) => h.id === habitId);
   const targetIdx = idx + dir;
   if (idx < 0 || targetIdx < 0 || targetIdx >= state.habits.length) return;
-  const temp = state.habits[idx];
-  state.habits[idx] = state.habits[targetIdx];
-  state.habits[targetIdx] = temp;
+  [state.habits[idx], state.habits[targetIdx]] = [state.habits[targetIdx], state.habits[idx]];
   saveState();
   renderAll();
+}
+
+function editHabit(habitId) {
+  const habit = state.habits.find((h) => h.id === habitId);
+  if (!habit) return;
+  const newName = prompt("Edit Habit Name:", habit.name);
+  if (newName && newName.trim()) {
+    habit.name = newName.trim();
+  }
+  const newNote = prompt("Edit Habit Note (leave blank for none):", habit.note || "");
+  if (newNote !== null) {
+    habit.note = newNote.trim();
+  }
+  saveState();
+  renderAll();
+  showToast("Habit updated!");
 }
 
 function archiveHabit(habitId) {
@@ -446,16 +1141,17 @@ function archiveHabit(habitId) {
   if (!habit) return;
   habit.archived = true;
   saveState();
-  showToast(`Archived "${habit.name}" (history preserved)`);
+  showToast(`Removed "${habit.name}" (saved in Archive)`);
   renderAll();
 }
 
 function restoreHabit(habitId) {
   const habit = state.habits.find((h) => h.id === habitId);
-  if (!habit) return;
-  habit.archived = false;
-  saveState();
-  renderAll();
+  if (habit) {
+    habit.archived = false;
+    saveState();
+    renderAll();
+  }
 }
 
 function deleteHabitForever(habitId) {
@@ -470,9 +1166,12 @@ function renderHabitCards() {
   const container = document.getElementById("habitCardsList");
   const activeHabits = state.habits.filter((h) => !h.archived);
 
+  document.getElementById("activeWeekRangeLabel").textContent =
+    weekOffset === 0 ? `Current Week (${wkKey})` : `Viewing Week (${wkKey})`;
+
   container.innerHTML = "";
   if (activeHabits.length === 0) {
-    container.innerHTML = `<p class="muted" style="text-align:center; padding:18px 0;">No active habits. Add your first goal above!</p>`;
+    container.innerHTML = `<p class="muted" style="text-align:center; padding:18px 0;">No active habits. Add your first daily task above!</p>`;
     return;
   }
 
@@ -532,7 +1231,9 @@ function renderHabitCards() {
           <span class="habit-score-tag">${doneCount}/${activeCount}</span>
           ${h.timerMins > 0 ? `<button type="button" class="mini-action-btn" onclick="openTimerModal('${h.id}')" title="Start ${h.timerMins}m Focus Timer">⏱️</button>` : ""}
           <button type="button" class="mini-action-btn" onclick="moveHabitOrder('${h.id}', -1)" title="Move Up">↑</button>
-          <button type="button" class="mini-action-btn" onclick="archiveHabit('${h.id}')" title="Archive / Remove">🗑️</button>
+          <button type="button" class="mini-action-btn" onclick="moveHabitOrder('${h.id}', 1)" title="Move Down">↓</button>
+          <button type="button" class="mini-action-btn" onclick="editHabit('${h.id}')" title="Edit Task">✏️</button>
+          <button type="button" class="mini-action-btn" onclick="archiveHabit('${h.id}')" title="Remove Task">🗑️</button>
         </div>
       </div>
       ${qtyHTML}
@@ -554,7 +1255,7 @@ document.getElementById("todoForm").addEventListener("submit", (e) => {
   state.todos.push({ id: "td_" + Date.now(), text });
   input.value = "";
   saveState();
-  renderTodos();
+  renderAll();
 });
 
 function completeTodoItem(todoId) {
@@ -566,7 +1267,10 @@ function completeTodoItem(todoId) {
 
   const [removed] = state.todos.splice(idx, 1);
   lastDeletedTodo = removed;
-  state.completedTodosToday.unshift({ text: removed.text, time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) });
+  state.completedTodosToday.unshift({
+    text: removed.text,
+    time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+  });
   state.todosCompletedEver = (state.todosCompletedEver || 0) + 1;
 
   awardXP(15);
@@ -574,10 +1278,20 @@ function completeTodoItem(todoId) {
   saveState();
 
   setTimeout(() => {
-    renderTodos();
-    renderBadges();
+    renderAll();
     showToast(`✓ Completed "${removed.text}" (+15 XP)`, true);
-  }, 320);
+  }, 300);
+}
+
+function editTodoItem(todoId) {
+  const item = state.todos.find((t) => t.id === todoId);
+  if (!item) return;
+  const updated = prompt("Edit To-Do item:", item.text);
+  if (updated && updated.trim()) {
+    item.text = updated.trim();
+    saveState();
+    renderAll();
+  }
 }
 
 document.getElementById("toastUndoBtn").addEventListener("click", () => {
@@ -587,7 +1301,7 @@ document.getElementById("toastUndoBtn").addEventListener("click", () => {
   lastDeletedTodo = null;
   awardXP(-15);
   saveState();
-  renderTodos();
+  renderAll();
   document.getElementById("toastBar").classList.add("hidden");
 });
 
@@ -604,7 +1318,7 @@ function renderTodos() {
 
   listEl.innerHTML = "";
   if (state.todos.length === 0) {
-    listEl.innerHTML = `<p class="muted" style="text-align:center; padding:18px 0;">All To-Do tasks cleared! Add a new task above.</p>`;
+    listEl.innerHTML = `<p class="muted" style="text-align:center; padding:18px 0;">No pending To-Dos. Add any work above!</p>`;
   } else {
     state.todos.forEach((item, index) => {
       const row = document.createElement("div");
@@ -615,20 +1329,22 @@ function renderTodos() {
           <span class="todo-number">${index + 1}.</span>
           <span class="todo-text">${escapeHTML(item.text)}</span>
         </div>
-        <input
-          type="checkbox"
-          class="todo-checkbox"
-          title="Mark complete and remove"
-          onchange="completeTodoItem('${item.id}')"
-        />
+        <div class="todo-right-controls">
+          <button type="button" class="mini-action-btn" onclick="editTodoItem('${item.id}')" title="Edit">✏️</button>
+          <input
+            type="checkbox"
+            class="todo-checkbox"
+            title="Tick when finished to remove"
+            onchange="completeTodoItem('${item.id}')"
+          />
+        </div>
       `;
       listEl.appendChild(row);
     });
   }
 
-  const completedEl = document.getElementById("completedTodoList");
-  completedEl.innerHTML = state.completedTodosToday
-    .slice(0, 8)
+  document.getElementById("completedTodoList").innerHTML = state.completedTodosToday
+    .slice(0, 10)
     .map((c) => `<div class="completed-todo-item">✓ ${escapeHTML(c.text)} (${c.time})</div>`)
     .join("");
 }
@@ -641,7 +1357,7 @@ function renderGraphAndInsights(metrics) {
   if (weeklyChart) weeklyChart.destroy();
 
   const accentHex = getComputedStyle(document.documentElement).getPropertyValue("--accent-1").trim() || "#ff2e88";
-  const gradient = ctx.createLinearGradient(0, 0, 0, 275);
+  const gradient = ctx.createLinearGradient(0, 0, 0, 280);
   gradient.addColorStop(0, accentHex + "88");
   gradient.addColorStop(1, "rgba(0, 212, 182, 0.0)");
 
@@ -690,10 +1406,8 @@ function renderGraphAndInsights(metrics) {
     }
   });
 
-  // Week Navigator Labels & Comparison vs Previous Week
   const wkKey = getWeekStartKey(weekOffset);
-  const prevWkKey = getWeekStartKey(weekOffset - 1);
-  const prevMetrics = computeWeekMetrics(prevWkKey);
+  const prevMetrics = computeWeekMetrics(getWeekStartKey(weekOffset - 1));
   const delta = metrics.overallPct - prevMetrics.overallPct;
 
   document.getElementById("viewedWeekTitle").textContent =
@@ -701,20 +1415,18 @@ function renderGraphAndInsights(metrics) {
   document.getElementById("nextWeekBtn").disabled = weekOffset >= 0;
 
   const deltaEl = document.getElementById("weekVsLastBadge");
-  if (prevMetrics.totalPossible === 0) {
-    deltaEl.textContent = `Score: ${metrics.overallPct}%`;
-  } else {
-    const arrow = delta >= 0 ? `↑ +${delta}%` : `↓ ${delta}%`;
-    deltaEl.textContent = `${arrow} vs previous week`;
-  }
+  deltaEl.textContent =
+    prevMetrics.totalPossible === 0
+      ? `Score: ${metrics.overallPct}%`
+      : `${delta >= 0 ? `↑ +${delta}%` : `↓ ${delta}%`} vs previous week`;
 
-  // Best & Worst Day Insights
   let bestIdx = 0;
   let worstIdx = 0;
   for (let i = 1; i < 7; i++) {
     if (metrics.dailyPercentages[i] > metrics.dailyPercentages[bestIdx]) bestIdx = i;
     if (metrics.dailyPercentages[i] < metrics.dailyPercentages[worstIdx]) worstIdx = i;
   }
+  const perfectDays = metrics.dailyPercentages.filter((p) => p === 100).length;
 
   document.getElementById("dayInsightsGrid").innerHTML = `
     <div class="insight-card">
@@ -725,6 +1437,14 @@ function renderGraphAndInsights(metrics) {
       <span class="muted">⚠️ Weakest Day</span>
       <strong>${DAYS[worstIdx]} (${metrics.dailyPercentages[worstIdx]}%)</strong>
     </div>
+    <div class="insight-card">
+      <span class="muted">📊 Weekly Average</span>
+      <strong>${metrics.overallPct}% Weighted</strong>
+    </div>
+    <div class="insight-card">
+      <span class="muted">👑 Perfect 100% Days</span>
+      <strong>${perfectDays} / 7 Days</strong>
+    </div>
   `;
 }
 
@@ -733,7 +1453,6 @@ function renderHeatmap() {
   grid.innerHTML = "";
   const today = getRolledDate();
 
-  // Render 84 days (12 weeks) ending today
   for (let i = 83; i >= 0; i--) {
     const d = new Date(today);
     d.setDate(today.getDate() - i);
@@ -754,7 +1473,7 @@ function renderHeatmap() {
 }
 
 // ==========================================
-// 10. RANK LEVELS, CHALLENGES, BADGES & LEADERBOARD
+// 10. EXACT RANK LEVELS, CHALLENGES & BADGES
 // ==========================================
 function evaluateRank(pct) {
   let rank = "Noob";
@@ -817,8 +1536,7 @@ function renderBadges(overallPct) {
   if (overallPct >= 90) unlockedSet.add("grand_master");
 
   document.getElementById("unlockedBadgesCount").textContent = unlockedSet.size;
-  const grid = document.getElementById("badgesGrid");
-  grid.innerHTML = BADGES_CATALOG.map(
+  document.getElementById("badgesGrid").innerHTML = BADGES_CATALOG.map(
     (b) => `
       <div class="badge-tile ${unlockedSet.has(b.id) ? "unlocked" : ""}" title="${b.desc}">
         <span class="badge-tile-icon">${b.icon}</span>
@@ -840,7 +1558,6 @@ function renderRankTab(metrics) {
   document.getElementById("nextRankLabel").textContent = nextLabel;
   document.getElementById("rankProgressFill").style.width = `${pct}%`;
 
-  // Trigger Full-Screen Rank-Up Celebration when advancing to a higher division
   const rankOrder = ["Noob", "Silver", "Gold", "Platinum", "Diamond", "Master", "Elite Master", "Grand Master", "Untouchable"];
   if (weekOffset === 0 && rankOrder.indexOf(rank) > rankOrder.indexOf(state.lastCelebratedRank)) {
     state.lastCelebratedRank = rank;
@@ -853,7 +1570,6 @@ function renderRankTab(metrics) {
     playTone("fanfare");
   }
 
-  // Weekly Challenges
   const perfectDays = metrics.dailyPercentages.filter((p) => p === 100).length;
   const challenges = [
     { name: "Hit 90%+ Grand Master Score", curr: Math.min(pct, 90), target: 90, unit: "%" },
@@ -874,7 +1590,6 @@ function renderRankTab(metrics) {
     })
     .join("");
 
-  // Leaderboard (User + Friends/Rivals)
   const board = [
     { name: `${state.userName} (You)`, pct, streak: state.streak.count, isMe: true },
     ...state.friends
@@ -891,7 +1606,6 @@ function renderRankTab(metrics) {
     )
     .join("");
 
-  // Habit Consistency Breakdown
   const wkKey = getWeekStartKey(weekOffset);
   document.getElementById("activitiesList").innerHTML = metrics.activeHabits
     .map((h) => {
@@ -914,7 +1628,7 @@ function renderRankTab(metrics) {
 }
 
 // ==========================================
-// 11. FOCUS / POMODORO TIMER MODAL
+// 11. FOCUS / POMODORO TIMER & REPORT CARD
 // ==========================================
 function openTimerModal(habitId) {
   const habit = state.habits.find((h) => h.id === habitId);
@@ -960,7 +1674,6 @@ document.getElementById("timerStartPauseBtn").addEventListener("click", () => {
         launchConfetti(60);
         document.getElementById("timerModal").classList.add("hidden");
 
-        // Auto-check today's box for this habit
         const todayIdx = getRolledDate().getDay();
         const wkKey = getWeekStartKey(0);
         const h = state.habits.find((item) => item.id === activeTimer.habitId);
@@ -987,9 +1700,6 @@ document.getElementById("timerCloseBtn").addEventListener("click", () => {
   document.getElementById("timerModal").classList.add("hidden");
 });
 
-// ==========================================
-// 12. SHAREABLE WEEKLY REPORT CARD (PNG)
-// ==========================================
 document.getElementById("generateReportCardBtn").addEventListener("click", () => {
   const wkKey = getWeekStartKey(weekOffset);
   const metrics = computeWeekMetrics(wkKey);
@@ -998,7 +1708,6 @@ document.getElementById("generateReportCardBtn").addEventListener("click", () =>
   const canvas = document.getElementById("reportCardCanvas");
   const ctx = canvas.getContext("2d");
 
-  // Background Gradient
   const bg = ctx.createLinearGradient(0, 0, 720, 900);
   bg.addColorStop(0, "#14162b");
   bg.addColorStop(0.5, "#2b1238");
@@ -1006,7 +1715,6 @@ document.getElementById("generateReportCardBtn").addEventListener("click", () =>
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, 720, 900);
 
-  // Accent Glow Circle
   ctx.fillStyle = "rgba(255, 46, 136, 0.22)";
   ctx.beginPath();
   ctx.arc(360, 320, 210, 0, Math.PI * 2);
@@ -1050,7 +1758,7 @@ document.getElementById("downloadReportImageBtn").addEventListener("click", () =
   link.click();
 });
 
-document.getElementById("shareReportImageBtn").addEventListener("click", async () => {
+document.getElementById("shareReportImageBtn").addEventListener("click", () => {
   const canvas = document.getElementById("reportCardCanvas");
   canvas.toBlob(async (blob) => {
     const file = new File([blob], "discipline-report.png", { type: "image/png" });
@@ -1062,7 +1770,7 @@ document.getElementById("shareReportImageBtn").addEventListener("click", async (
       });
     } else {
       document.getElementById("downloadReportImageBtn").click();
-      showToast("Report PNG saved—ready to post on WhatsApp/Instagram!");
+      showToast("Report PNG saved—ready to share!");
     }
   });
 });
@@ -1072,7 +1780,7 @@ document.getElementById("closeReportModalBtn").addEventListener("click", () => {
 });
 
 // ==========================================
-// 13. SETTINGS, REMINDERS, BACKUP & SYNC CODE
+// 12. SETTINGS, BACKUP, ARCHIVE & EVENTS
 // ==========================================
 document.getElementById("openSettingsBtn").addEventListener("click", () => {
   renderArchivedHabits();
@@ -1092,6 +1800,13 @@ document.getElementById("saveUserNameBtn").addEventListener("click", () => {
   }
 });
 
+document.getElementById("toggleSoundBtn").addEventListener("click", () => {
+  state.soundEnabled = state.soundEnabled === false ? true : false;
+  saveState();
+  applyEnvironmentAndTheme();
+  if (state.soundEnabled) playTone("check");
+});
+
 document.querySelectorAll(".theme-choice").forEach((btn) => {
   btn.addEventListener("click", () => {
     state.theme = btn.dataset.themeVal;
@@ -1107,19 +1822,6 @@ document.querySelectorAll(".swatch-btn").forEach((btn) => {
     applyEnvironmentAndTheme();
     renderAll();
   });
-});
-
-document.getElementById("enableNotifBtn").addEventListener("click", async () => {
-  state.reminderTime = document.getElementById("dailyReminderTimeInput").value;
-  if ("Notification" in window) {
-    const perm = await Notification.requestPermission();
-    state.notificationsEnabled = perm === "granted";
-    document.getElementById("notifStatusText").textContent =
-      perm === "granted"
-        ? `✅ Alerts active for ${state.reminderTime} & 9:00 PM Streak Protection.`
-        : "⚠️ Please allow notifications in your browser/phone settings.";
-  }
-  saveState();
 });
 
 function renderArchivedHabits() {
@@ -1165,7 +1867,7 @@ document.getElementById("importJsonInput").addEventListener("change", (e) => {
         saveState();
         applyEnvironmentAndTheme();
         renderAll();
-        showToast("✅ Backup restored successfully!");
+        showToast("✅ Backup restored!");
       }
     } catch (_) {
       showToast("❌ Invalid backup file.");
@@ -1178,11 +1880,11 @@ document.getElementById("copySyncCodeBtn").addEventListener("click", () => {
   const metrics = computeWeekMetrics(getWeekStartKey(0));
   const payload = btoa(encodeURIComponent(JSON.stringify({ name: state.userName, pct: metrics.overallPct, streak: state.streak.count })));
   navigator.clipboard?.writeText(payload);
-  showToast("🔗 Friend/Sync code copied to clipboard!");
+  showToast("🔗 Friend code copied!");
 });
 
 document.getElementById("loadSyncCodeBtn").addEventListener("click", () => {
-  const code = prompt("Paste a Friend's Sync Code to add them to your Leaderboard:");
+  const code = prompt("Paste a Friend's Code to add them to your Leaderboard:");
   if (!code) return;
   try {
     const friend = JSON.parse(decodeURIComponent(atob(code.trim())));
@@ -1190,7 +1892,7 @@ document.getElementById("loadSyncCodeBtn").addEventListener("click", () => {
       state.friends.push({ name: friend.name, pct: friend.pct || 0, streak: friend.streak || 1 });
       saveState();
       renderAll();
-      showToast(`Added ${friend.name} to Leaderboard!`);
+      showToast(`Added ${friend.name}!`);
     }
   } catch (_) {
     showToast("Invalid code.");
@@ -1201,9 +1903,6 @@ document.getElementById("addFriendScoreBtn").addEventListener("click", () => {
   document.getElementById("loadSyncCodeBtn").click();
 });
 
-// ==========================================
-// 14. NAVIGATION, FORM EVENTS & MASTER RENDER
-// ==========================================
 document.querySelectorAll(".nav-item").forEach((btn) => {
   btn.addEventListener("click", () => {
     const target = btn.dataset.tab;
@@ -1215,23 +1914,16 @@ document.querySelectorAll(".nav-item").forEach((btn) => {
   });
 });
 
-document.getElementById("scrollToAppBtn")?.addEventListener("click", () => {
-  document.getElementById("mainAppShell").scrollIntoView({ behavior: "smooth" });
-});
-
 document.getElementById("toggleComposerOptsBtn").addEventListener("click", () => {
   document.getElementById("composerAdvanced").classList.toggle("open");
 });
-
 document.getElementById("openHabitComposerBtn").addEventListener("click", () => {
   document.getElementById("composerAdvanced").classList.add("open");
   document.getElementById("habitNameInput").focus();
 });
-
 document.getElementById("habitTypeInput").addEventListener("change", (e) => {
   document.getElementById("qtyTargetGroup").classList.toggle("hidden", e.target.value !== "qty");
 });
-
 document.querySelectorAll("#composerDaysRow .day-pill").forEach((pill) => {
   pill.addEventListener("click", () => pill.classList.toggle("active"));
 });
@@ -1309,10 +2001,6 @@ document.getElementById("modeCountBtn").addEventListener("click", () => {
   renderAll();
 });
 
-document.getElementById("nextQuoteBtn").addEventListener("click", () => {
-  quoteOffset += 1;
-  syncStreakAndClock();
-});
 document.getElementById("copyQuoteBtn").addEventListener("click", () => {
   const txt = document.getElementById("dailyQuoteText").textContent;
   navigator.clipboard?.writeText(txt);
@@ -1328,22 +2016,24 @@ function renderAll() {
   const metrics = computeWeekMetrics(wkKey);
   const todayIdx = getRolledDate().getDay();
 
-  // Update Header & Today's Widget
   const currentWkMetrics = computeWeekMetrics(getWeekStartKey(0));
   const todayScheduled = currentWkMetrics.activeHabits.filter((h) => h.activeDays[todayIdx]).length;
   const todayDone = currentWkMetrics.dailyRawDone[todayIdx];
   const todayPct = currentWkMetrics.dailyPercentages[todayIdx];
 
-  document.getElementById("todayDateLabel").textContent = `TODAY (${DAYS[todayIdx].toUpperCase()})`;
+  document.getElementById("todayDateLabel").textContent = `TODAY'S MISSION (${DAYS[todayIdx].toUpperCase()})`;
   document.getElementById("todayDoneFraction").textContent = `${todayDone} / ${todayScheduled}`;
+  document.getElementById("todayTodoPendingInline").textContent = state.todos.length;
   document.getElementById("todayPctPill").textContent = `${todayPct}%`;
   document.getElementById("overallScoreBadge").textContent = `${metrics.totalEarned} / ${metrics.totalPossible} pts`;
   document.getElementById("archivedCountBadge").textContent = state.habits.filter((h) => h.archived).length;
 
-  // 9 PM Streak-in-Danger Alert Check
+  // 9 PM Streak-in-Danger Alert (checks both daily tasks & To-Do list)
   const hourNow = new Date().getHours();
-  const inDanger = hourNow >= 21 && todayScheduled > 0 && todayDone < todayScheduled;
-  document.getElementById("streakDangerBanner").classList.toggle("hidden", !inDanger);
+  const incompleteToday = (todayScheduled > 0 && todayDone < todayScheduled) || state.todos.length > 0;
+  const showDanger = hourNow >= 21 && incompleteToday;
+  document.getElementById("streakDangerBanner").classList.toggle("hidden", !showDanger);
+  document.getElementById("useFreezeBtn").classList.toggle("hidden", !(showDanger && state.streak.freezesLeft > 0));
 
   renderXPBar();
   renderHabitCards();
@@ -1370,6 +2060,10 @@ if ("serviceWorker" in navigator) {
 }
 
 applyEnvironmentAndTheme();
+setupNotificationPrompt();
 syncStreakAndClock();
 renderAll();
-setInterval(syncStreakAndClock, 20000);
+setInterval(() => {
+  syncStreakAndClock();
+  checkScheduledReminders();
+}, 20000);

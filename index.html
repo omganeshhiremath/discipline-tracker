@@ -4,7 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#080912" />
-  <title>Discipline — Habit, To-Do & Rank Mastery System</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Discipline — Habit, To-Do & Rank Tracker</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/png" href="icon-512.png" />
   <link rel="apple-touch-icon" href="icon-512.png" />
@@ -16,65 +18,59 @@
   <div class="aurora-bg" aria-hidden="true"></div>
   <canvas id="confettiCanvas" aria-hidden="true"></canvas>
 
-  <!-- Web-Only Flagship Product Landing Strip (Auto-hidden inside installed Android APK) -->
-  <section class="website-showcase" id="websiteShowcase">
-    <div class="showcase-inner">
-      <div class="showcase-badge">⚡ v3.0 EDITION • WEB & ANDROID APP</div>
-      <h1 class="showcase-headline">Build Unbreakable <span class="gradient-text">Daily Discipline.</span></h1>
-      <p class="showcase-sub">
-        Track 7-day habit grids, crush daily To-Dos, run built-in Focus Timers, climb from <strong>Noob</strong> to <strong>Untouchable</strong>, and analyze every week with precision graphs.
-      </p>
-      <div class="showcase-cta-row">
-        <a href="./discipline-app.apk" download class="btn-download-hero">
-          <span>⬇ Download Android APK</span>
-          <small>Direct Install • Free • Offline Ready</small>
-        </a>
-        <button type="button" class="btn-web-explore" id="scrollToAppBtn">
-          Use Live Web App ↓
-        </button>
+  <!-- Direct App Interface (Opens straight into the dashboard with zero splash/logo delay) -->
+  <div class="app-shell" id="mainAppShell">
+    <!-- Smart Notification Permission Banner -->
+    <div class="notif-prompt-card hidden" id="notifPromptCard">
+      <div class="notif-prompt-left">
+        <span class="notif-bell-icon">🔔</span>
+        <div>
+          <strong>Allow Daily Reminders</strong>
+          <p>Get notified to complete today's daily tasks and your To-Do list before 12:01 AM.</p>
+        </div>
       </div>
-      <div class="showcase-pills">
-        <span>🔥 12:01 AM Streak Engine</span>
-        <span>⏱️ Pomodoro Task Timers</span>
-        <span>🏆 9 Competitive Ranks</span>
-        <span>📊 GitHub-Style Heatmap</span>
+      <div class="notif-prompt-actions">
+        <button type="button" class="btn-notif-allow" id="promptAllowNotifBtn">Allow</button>
+        <button type="button" class="btn-notif-dismiss" id="promptDismissNotifBtn">Later</button>
       </div>
     </div>
-  </section>
 
-  <!-- Main App Shell -->
-  <div class="app-shell" id="mainAppShell">
-    <!-- Streak-in-Danger Alert Banner (Activates automatically after 8:30 PM if today's active tasks aren't done) -->
+    <!-- 9:00 PM Streak-in-Danger Alert Banner -->
     <div class="danger-banner hidden" id="streakDangerBanner">
       <div class="danger-left">
         <span class="danger-pulse">⚠️</span>
         <div>
           <strong>Streak in Danger!</strong>
-          <p id="streakDangerText">Complete today's remaining tasks before 12:01 AM to protect your streak.</p>
+          <p id="streakDangerText">Complete today's remaining tasks & To-Do list before 12:01 AM!</p>
         </div>
       </div>
       <button type="button" class="btn-freeze-use hidden" id="useFreezeBtn" title="Use Monthly Streak Freeze">
-        ❄️ Freeze
+        ❄️ Use Freeze
       </button>
     </div>
 
-    <!-- Top Hero Card: Brand, Streak, Freeze, XP Level & Daily Quote -->
+    <!-- Top Hero Card: Brand, Streak, Freeze, XP Level & Locked Daily Quote -->
     <header class="hero-card">
       <div class="hero-top-row">
         <div class="brand-group">
-          <img src="icon-512.png" alt="Discipline Logo" class="app-logo" />
+          <img src="icon-512.png" alt="Discipline" class="app-logo" />
           <div>
             <div class="brand-title-line">
               <h2>Discipline</h2>
               <span class="rpg-level-pill" id="rpgLevelBadge">LVL 1</span>
             </div>
-            <span class="live-clock-note" id="resetCountdownText">Rolls over at 12:01 AM</span>
+            <span class="live-clock-note" id="resetCountdownText">Next streak +1 & quote in --h --m (12:01 AM)</span>
           </div>
         </div>
 
         <div class="hero-right-cluster">
-          <!-- Snapchat-Style Streak + Freeze -->
-          <div class="streak-pill" title="Daily Login Streak (Resets/advances at 12:01 AM)">
+          <!-- Web-only compact APK pill (Auto-hidden inside installed Android App) -->
+          <a href="./discipline-app.apk" download class="web-apk-pill" id="webApkPill" title="Download Android APK">
+            ⬇ APK
+          </a>
+
+          <!-- Snapchat-Style Login Streak + Monthly Freeze -->
+          <div class="streak-pill" title="Daily Login Streak (Advances +1 at 12:01 AM)">
             <span class="flame-icon">🔥</span>
             <div class="streak-info">
               <span class="streak-count" id="streakCount">1</span>
@@ -83,8 +79,8 @@
             <span class="freeze-chip" id="freezeCountChip" title="Monthly Streak Freezes Available">❄️1</span>
           </div>
 
-          <!-- Settings / Studio Button -->
-          <button type="button" class="studio-btn" id="openSettingsBtn" title="Themes, Backup, Reminders & Archive">
+          <!-- Command Center / Settings -->
+          <button type="button" class="studio-btn" id="openSettingsBtn" title="Settings, Reminders & Backup">
             ⚙️
           </button>
         </div>
@@ -101,27 +97,24 @@
         </div>
       </div>
 
-      <!-- Today's Quick-Focus Widget -->
+      <!-- Today's Quick-Focus Widget (Daily Tasks + Pending To-Dos) -->
       <div class="today-widget">
         <div class="today-widget-left">
-          <span class="today-eyebrow" id="todayDateLabel">TODAY'S FOCUS</span>
+          <span class="today-eyebrow" id="todayDateLabel">TODAY'S MISSION</span>
           <div class="today-stat-line">
-            <strong id="todayDoneFraction">0 / 0</strong> tasks done today
+            <strong id="todayDoneFraction">0 / 0</strong> tasks done • <strong id="todayTodoPendingInline">0</strong> To-Dos left
           </div>
         </div>
         <div class="today-ring-badge" id="todayPctPill">0%</div>
       </div>
 
-      <!-- Daily Motivational Quote -->
+      <!-- Locked Daily Motivational Quote (Advances strictly at 12:01 AM with Streak +1; NO refresh button) -->
       <div class="quote-box">
         <div class="quote-header">
-          <span class="quote-tag">DAILY MOTIVATION</span>
-          <div class="quote-actions">
-            <button type="button" id="copyQuoteBtn" class="icon-btn" title="Copy quote">📋</button>
-            <button type="button" id="nextQuoteBtn" class="icon-btn" title="Next quote">↻</button>
-          </div>
+          <span class="quote-tag" id="quoteCounterLabel">DAILY QUOTE • UPDATES AT 12:01 AM</span>
+          <button type="button" id="copyQuoteBtn" class="icon-btn" title="Copy today's quote">📋</button>
         </div>
-        <p id="dailyQuoteText" class="quote-text">"You are not weak. Work harder."</p>
+        <p id="dailyQuoteText" class="quote-text">"Discipline is choosing what you want most over what you want now."</p>
       </div>
     </header>
 
@@ -141,13 +134,13 @@
           </div>
         </div>
 
-        <!-- Collapsible Rich Habit Creator -->
+        <!-- Rich Habit Creator Form -->
         <form id="habitForm" class="habit-composer">
           <div class="composer-row">
             <input
               type="text"
               id="habitNameInput"
-              placeholder="Habit name (e.g., Daily 30 min Exercise)..."
+              placeholder="Add daily task (e.g., Daily 30 min Exercise)..."
               maxlength="45"
               required
             />
@@ -204,7 +197,6 @@
               maxlength="60"
             />
 
-            <!-- Custom Active Days Selector -->
             <div class="custom-days-selector">
               <span class="field-label">Active Days:</span>
               <div class="day-pills-row" id="composerDaysRow">
@@ -224,25 +216,24 @@
           </button>
         </form>
 
-        <!-- Habit Cards Container -->
         <div id="habitCardsList" class="habit-cards-list"></div>
 
         <div class="card-footer-actions">
-          <button type="button" id="resetWeekBtn" class="btn-ghost-sm">↺ Reset Current Week Boxes</button>
+          <button type="button" id="resetWeekBtn" class="btn-ghost-sm">↺ Reset Week Boxes</button>
           <button type="button" id="openArchiveQuickBtn" class="btn-ghost-sm">📦 Archived (<span id="archivedCountBadge">0</span>)</button>
         </div>
       </section>
     </main>
 
     <!-- ========================================== -->
-    <!-- TAB 2: NUMBERED TO-DO LIST (AUTO-COMPLETE) -->
+    <!-- TAB 2: NUMBERED TO-DO LIST                 -->
     <!-- ========================================== -->
     <main class="tab-view" id="view-todo">
       <section class="glass-card">
         <div class="section-header">
           <div>
-            <h3>Quick To-Do List</h3>
-            <p class="muted">Tick the box when done to complete & clear</p>
+            <h3>To-Do List</h3>
+            <p class="muted">Tick the box when work is over to remove it</p>
           </div>
           <span class="pill-badge pill-glow" id="todoCountBadge">0 Pending</span>
         </div>
@@ -251,20 +242,18 @@
           <input
             type="text"
             id="todoInput"
-            placeholder="Add work (e.g., Computer Class work)..."
+            placeholder="Enter work (e.g., Computer Class work)..."
             maxlength="80"
             required
           />
           <button type="submit" class="btn-add-solid">+ Add</button>
         </form>
 
-        <!-- Numbered To-Do Items (1. Computer Class work [ ]) -->
         <div id="todoListContainer" class="todo-list-container"></div>
 
-        <!-- Recently Completed To-Dos (Collapsible Log) -->
-        <div class="completed-todo-drawer" id="completedTodoDrawer">
+        <div class="completed-todo-drawer">
           <div class="completed-drawer-header">
-            <span class="muted">Completed Today: <strong id="todoCompletedCount">0</strong></span>
+            <span class="muted">Completed Log: <strong id="todoCompletedCount">0</strong></span>
             <button type="button" class="btn-ghost-sm" id="clearCompletedTodosBtn">Clear Log</button>
           </div>
           <div id="completedTodoList" class="completed-todo-list"></div>
@@ -276,13 +265,12 @@
     <!-- TAB 3: MAXIMIZED GRAPH, HISTORY & HEATMAP  -->
     <!-- ========================================== -->
     <main class="tab-view" id="view-graph">
-      <!-- Week-by-Week History Switcher + Main Area Graph -->
       <section class="glass-card graph-section">
         <div class="week-navigator">
           <button type="button" class="week-nav-btn" id="prevWeekBtn">◀ Prev</button>
           <div class="week-nav-center">
             <strong id="viewedWeekTitle">This Week</strong>
-            <span class="week-delta-badge" id="weekVsLastBadge">Baseline Week</span>
+            <span class="week-delta-badge" id="weekVsLastBadge">Current Week</span>
           </div>
           <button type="button" class="week-nav-btn" id="nextWeekBtn" disabled>Next ▶</button>
         </div>
@@ -302,16 +290,14 @@
           <canvas id="modernWeeklyChart"></canvas>
         </div>
 
-        <!-- Best & Worst Day-of-Week Insights -->
         <div class="insights-grid" id="dayInsightsGrid"></div>
       </section>
 
-      <!-- GitHub-Style 12-Week Activity Heatmap -->
       <section class="glass-card">
         <div class="section-header">
           <div>
             <h3>Consistency Heatmap</h3>
-            <p class="muted">Last 12 weeks • Brighter = higher daily score</p>
+            <p class="muted">Last 12 weeks • Brighter = higher score</p>
           </div>
           <div class="heatmap-legend">
             <span>Less</span>
@@ -336,23 +322,21 @@
       <section class="glass-card">
         <div class="section-header">
           <div>
-            <h3>Rank & Weekly Verdict</h3>
+            <h3>Rank & Weekly Analysis</h3>
             <p class="muted">Weighted score including 2x priority tasks</p>
           </div>
           <span class="pill-badge pill-glow" id="weeklyPctBadge">0%</span>
         </div>
 
-        <!-- Rank Showcase Banner -->
         <div class="rank-showcase">
           <div class="rank-icon-circle" id="rankEmoji">🛡️</div>
           <div class="rank-details">
-            <span class="rank-eyebrow">CURRENT DIVISION</span>
+            <span class="rank-eyebrow">CURRENT LEVEL</span>
             <h3 class="rank-title" id="rankTitle">Noob Level</h3>
             <p class="motivation-verdict" id="motivationVerdict">You are weak, Comeback!</p>
           </div>
         </div>
 
-        <!-- Progress to Next Rank -->
         <div class="rank-progress-block">
           <div class="rank-progress-labels">
             <span id="currentRankLabel">Noob (0%)</span>
@@ -363,24 +347,20 @@
           </div>
         </div>
 
-        <!-- Shareable Weekly Report Card Button -->
         <button type="button" class="btn-share-report" id="generateReportCardBtn">
           📸 Generate & Share Weekly Report Card
         </button>
 
-        <!-- Weekly Challenges -->
         <div class="sub-block">
           <h4 class="sub-heading">⚔️ Weekly Challenges</h4>
           <div id="weeklyChallengesList" class="challenges-list"></div>
         </div>
 
-        <!-- Trophy & Achievements Shelf -->
         <div class="sub-block">
           <h4 class="sub-heading">🏅 Trophy Shelf (<span id="unlockedBadgesCount">0</span>/8)</h4>
           <div id="badgesGrid" class="badges-grid"></div>
         </div>
 
-        <!-- Friends & Rivals Leaderboard -->
         <div class="sub-block">
           <div class="sub-header-row">
             <h4 class="sub-heading">🌍 Discipline Leaderboard</h4>
@@ -389,7 +369,6 @@
           <div id="leaderboardList" class="leaderboard-list"></div>
         </div>
 
-        <!-- Habit-by-Habit Consistency Bars -->
         <div class="sub-block">
           <h4 class="sub-heading">📊 Habit Breakdown</h4>
           <div id="activitiesList" class="activities-list"></div>
@@ -398,7 +377,7 @@
     </main>
   </div>
 
-  <!-- Native 4-Tab Bottom Navigation Bar -->
+  <!-- 4-Tab Native Bottom Navigation Bar -->
   <nav class="bottom-nav">
     <button type="button" class="nav-item active" data-tab="tasks">
       <span class="nav-icon">☑</span>
@@ -418,17 +397,13 @@
     </button>
   </nav>
 
-  <!-- ========================================== -->
-  <!-- MODALS: TIMER, RANK-UP, REPORT & SETTINGS  -->
-  <!-- ========================================== -->
-
   <!-- Focus / Pomodoro Timer Modal -->
   <div class="modal-backdrop hidden" id="timerModal">
     <div class="modal-card timer-modal-card">
-      <span class="modal-eyebrow">⏱️ FOCUS SESSION</span>
+      <span class="modal-eyebrow">⏱️ FOCUS TIMER</span>
       <h3 id="timerTaskTitle">Study 30min</h3>
       <div class="timer-display" id="timerClockDisplay">30:00</div>
-      <p class="muted">Completing this timer will auto-check today's box & award +25 XP!</p>
+      <p class="muted">Finishing this timer auto-checks today's box & awards +25 XP!</p>
       <div class="timer-btn-row">
         <button type="button" class="btn-add-solid" id="timerStartPauseBtn">▶ Start</button>
         <button type="button" class="btn-ghost-sm" id="timerResetBtn">↺ Reset</button>
@@ -440,7 +415,6 @@
   <!-- Full-Screen Rank-Up Celebration Modal -->
   <div class="modal-backdrop hidden" id="rankUpModal">
     <div class="modal-card rankup-modal-card">
-      <div class="rankup-rays">✨</div>
       <span class="modal-eyebrow">PROMOTION UNLOCKED!</span>
       <div class="rankup-big-icon" id="rankUpIcon">👑</div>
       <h2 id="rankUpNewTitle">Grand Master</h2>
@@ -466,7 +440,7 @@
     </div>
   </div>
 
-  <!-- Settings, Themes, Reminders, Cloud/Sync & Backup Modal -->
+  <!-- Settings, Notifications, Themes & Backup Modal -->
   <div class="modal-backdrop hidden" id="settingsModal">
     <div class="modal-card settings-modal-card">
       <div class="section-header">
@@ -474,10 +448,9 @@
         <button type="button" class="icon-btn" id="closeSettingsBtn">✕</button>
       </div>
 
-      <!-- Profile Name -->
       <div class="settings-block">
         <label class="field-group">
-          <span>Your Warrior Name (for Leaderboard & Report Card)</span>
+          <span>Your Name (Leaderboard & Report Card)</span>
           <div class="composer-row">
             <input type="text" id="userNameInput" placeholder="Enter your name..." maxlength="24" />
             <button type="button" class="btn-add-solid" id="saveUserNameBtn">Save</button>
@@ -485,62 +458,59 @@
         </label>
       </div>
 
-      <!-- Theme & Accent Color -->
       <div class="settings-block">
-        <span class="settings-label">App Theme</span>
+        <span class="settings-label">🔔 Task & To-Do Reminder Notifications</span>
+        <div class="composer-row">
+          <input type="time" id="dailyReminderTimeInput" value="20:00" />
+          <button type="button" class="btn-add-solid" id="enableNotifBtn">Allow & Save</button>
+          <button type="button" class="btn-ghost-sm" id="testNotifBtn">Test</button>
+        </div>
+        <p class="muted" id="notifStatusText" style="margin-top:6px;">
+          Reminds you to complete today's daily tasks & To-Do list + 9:00 PM Streak Alert.
+        </p>
+      </div>
+
+      <div class="settings-block">
+        <span class="settings-label">App Theme, Accent Glow & Sound</span>
         <div class="theme-btn-row">
           <button type="button" class="theme-choice" data-theme-val="aurora">🌌 Aurora</button>
           <button type="button" class="theme-choice" data-theme-val="oled">🖤 Pure OLED</button>
           <button type="button" class="theme-choice" data-theme-val="light">☀️ Daylight</button>
         </div>
-
-        <span class="settings-label" style="margin-top:10px;">Accent Glow</span>
-        <div class="accent-swatches">
-          <button type="button" class="swatch-btn" data-accent-val="pink" style="background:#ff2e88;"></button>
-          <button type="button" class="swatch-btn" data-accent-val="cyan" style="background:#00d4b6;"></button>
-          <button type="button" class="swatch-btn" data-accent-val="gold" style="background:#ffb800;"></button>
-          <button type="button" class="swatch-btn" data-accent-val="violet" style="background:#8b5cf6;"></button>
-          <button type="button" class="swatch-btn" data-accent-val="emerald" style="background:#10b981;"></button>
+        <div class="accent-row-between" style="margin-top:10px;">
+          <div class="accent-swatches">
+            <button type="button" class="swatch-btn" data-accent-val="pink" style="background:#ff2e88;"></button>
+            <button type="button" class="swatch-btn" data-accent-val="cyan" style="background:#00d4b6;"></button>
+            <button type="button" class="swatch-btn" data-accent-val="gold" style="background:#ffb800;"></button>
+            <button type="button" class="swatch-btn" data-accent-val="violet" style="background:#8b5cf6;"></button>
+            <button type="button" class="swatch-btn" data-accent-val="emerald" style="background:#10b981;"></button>
+          </div>
+          <button type="button" class="btn-ghost-sm" id="toggleSoundBtn">🔊 Sound: ON</button>
         </div>
       </div>
 
-      <!-- Daily Notifications & 9 PM Streak Alert -->
-      <div class="settings-block">
-        <span class="settings-label">🔔 Smart Reminders</span>
-        <div class="composer-row">
-          <input type="time" id="dailyReminderTimeInput" value="20:00" />
-          <button type="button" class="btn-add-solid" id="enableNotifBtn">Enable Alerts</button>
-        </div>
-        <p class="muted" id="notifStatusText" style="margin-top:6px;">
-          Includes 9:00 PM Streak-in-Danger protection alert.
-        </p>
-      </div>
-
-      <!-- Streak Stats & Freeze Info -->
       <div class="settings-block">
         <span class="settings-label">🔥 Streak & Shield Vault</span>
-        <p class="muted">Longest Streak Ever: <strong id="longestStreakStat">1</strong> days • Freezes Left: <strong id="freezeVaultStat">1</strong>/month</p>
+        <p class="muted">Longest Streak Ever: <strong id="longestStreakStat">1</strong> days • Monthly Freezes Left: <strong id="freezeVaultStat">1</strong></p>
       </div>
 
-      <!-- Archived Habits -->
       <div class="settings-block">
         <span class="settings-label">📦 Archived Habits</span>
         <div id="archivedHabitsList" class="archived-list"></div>
       </div>
 
-      <!-- Backup, Restore & Multi-Device Sync Code -->
       <div class="settings-block">
-        <span class="settings-label">💾 Backup, Restore & Cloud Sync</span>
+        <span class="settings-label">💾 Backup, Restore & Friend Sync Code</span>
         <div class="timer-btn-row">
-          <button type="button" class="btn-ghost-sm" id="exportJsonBtn">⬇ Export JSON Backup</button>
+          <button type="button" class="btn-ghost-sm" id="exportJsonBtn">⬇ Export JSON</button>
           <label class="btn-ghost-sm" style="cursor:pointer;">
             ⬆ Import JSON
             <input type="file" id="importJsonInput" accept=".json" class="hidden" />
           </label>
         </div>
         <div class="timer-btn-row" style="margin-top:8px;">
-          <button type="button" class="btn-ghost-sm" id="copySyncCodeBtn">🔗 Copy Transfer/Friend Code</button>
-          <button type="button" class="btn-ghost-sm" id="loadSyncCodeBtn">📥 Paste Sync Code</button>
+          <button type="button" class="btn-ghost-sm" id="copySyncCodeBtn">🔗 Copy Friend Code</button>
+          <button type="button" class="btn-ghost-sm" id="loadSyncCodeBtn">📥 Paste Friend Code</button>
         </div>
       </div>
     </div>
