@@ -1,4 +1,4 @@
-const CACHE_NAME = "discipline-app-v2";
+const CACHE_NAME = "discipline-app-v3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -24,7 +24,6 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Network-first so updates pushed to GitHub always appear immediately
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     fetch(event.request)
