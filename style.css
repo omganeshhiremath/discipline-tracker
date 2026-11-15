@@ -1,327 +1,605 @@
 :root {
-  --bg-main: #0d0d0f;
-  --bg-card: #16161a;
-  --bg-elevated: #202026;
-  --border: #2a2a32;
-  --text-primary: #f5f5f7;
-  --text-muted: #9494a0;
-  --accent: #ff5238;
-  --accent-soft: rgba(255, 82, 56, 0.18);
-  --success: #2ecc71;
+  --bg-dark: #090a14;
+  --glass-bg: rgba(20, 22, 38, 0.72);
+  --glass-elevated: rgba(32, 35, 58, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.11);
+  --text-main: #ffffff;
+  --text-muted: #9ca3bf;
+  --pink: #ff2e88;
+  --coral: #ff6a45;
+  --teal: #00d4b6;
+  --violet: #6c3ce9;
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background-color: var(--bg-main);
-  color: var(--text-primary);
-  line-height: 1.5;
-  padding: 16px;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding: 12px 12px 92px 12px;
 }
 
-.app-container {
-  max-width: 960px;
+/* Vibrant Aurora Mesh Glow (Inspired by Cccoins UI) */
+.aurora-bg {
+  position: fixed;
+  top: -120px;
+  left: -20%;
+  width: 140%;
+  height: 440px;
+  background: radial-gradient(circle at 20% 25%, rgba(255, 46, 136, 0.45), transparent 55%),
+              radial-gradient(circle at 80% 20%, rgba(255, 106, 69, 0.4), transparent 50%),
+              radial-gradient(circle at 50% 80%, rgba(0, 212, 182, 0.25), transparent 60%);
+  filter: blur(45px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.app-shell {
+  max-width: 680px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 
-/* Header */
-.top-bar {
+/* Top Gradient Hero Card */
+.hero-card {
+  background: linear-gradient(135deg, rgba(255, 46, 136, 0.85) 0%, rgba(168, 45, 156, 0.82) 48%, rgba(16, 128, 138, 0.82) 100%);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 24px;
+  padding: 18px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+
+.hero-top-row {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  padding: 8px 4px;
-}
-
-.top-bar h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.subtitle {
-  color: var(--text-muted);
-  font-size: 0.88rem;
-}
-
-.header-actions {
-  display: flex;
   gap: 10px;
-  flex-wrap: wrap;
+  margin-bottom: 14px;
 }
 
-/* Buttons */
-.btn {
-  padding: 10px 16px;
-  border-radius: 10px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  text-decoration: none;
-  display: inline-flex;
+.brand-group {
+  display: flex;
   align-items: center;
-  gap: 6px;
-  transition: 0.2s ease;
+  gap: 11px;
 }
 
-.btn-primary {
-  background: var(--accent);
-  color: #fff;
+.app-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  object-fit: cover;
 }
 
-.btn-primary:hover {
-  filter: brightness(1.1);
+.brand-group h1 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
-.btn-apk {
-  background: var(--accent-soft);
-  color: var(--accent);
-  border: 1px solid var(--accent);
+.live-clock-note {
+  display: block;
+  font-size: 0.74rem;
+  color: rgba(255, 255, 255, 0.82);
 }
 
-.btn-apk:hover {
-  background: var(--accent);
-  color: #fff;
+/* Snapchat-Style Login Streak Pill */
+.streak-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(10, 12, 24, 0.55);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 7px 13px;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
 }
 
-.btn-ghost {
-  background: var(--bg-elevated);
-  color: var(--text-muted);
-  border: 1px solid var(--border);
+.flame-icon {
+  font-size: 1.35rem;
+  animation: pulseFlame 1.8s infinite ease-in-out;
 }
 
-.btn-ghost:hover {
-  color: var(--text-primary);
+@keyframes pulseFlame {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.16); }
 }
 
-/* Cards */
-.card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
+.streak-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+
+.streak-count {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #ffbe3b;
+}
+
+.streak-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Daily Motivational Quote Box */
+.quote-box {
+  background: rgba(9, 10, 20, 0.36);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 16px;
-  padding: 18px;
+  padding: 12px 14px;
 }
 
-.card-header {
+.quote-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.quote-tag {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.icon-btn {
+  background: rgba(255, 255, 255, 0.16);
+  border: none;
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.quote-text {
+  font-size: 0.94rem;
+  font-weight: 600;
+  font-style: italic;
+  color: #ffffff;
+}
+
+.web-only-bar {
+  margin-top: 12px;
+}
+
+.btn-white-pill {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background: #ffffff;
+  color: #0b0c16;
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 10px 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Glass Cards */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 22px;
+  padding: 16px;
+}
+
+.section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 14px;
+  gap: 8px;
 }
 
-.card-header h2 {
-  font-size: 1.05rem;
-  font-weight: 600;
+.section-header h2 {
+  font-size: 1.08rem;
+  font-weight: 700;
 }
 
 .muted {
   color: var(--text-muted);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
 }
 
-.badge {
-  background: var(--bg-elevated);
-  padding: 4px 10px;
+.header-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pill-badge {
+  background: var(--glass-elevated);
+  border: 1px solid var(--glass-border);
+  padding: 5px 11px;
   border-radius: 999px;
   font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.badge-accent {
-  background: var(--accent-soft);
-  color: var(--accent);
-}
-
-/* Add Task Form */
-.task-form {
-  display: flex;
-  gap: 10px;
-}
-
-.task-form input {
-  flex: 1;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  color: var(--text-primary);
-  padding: 11px 14px;
-  border-radius: 10px;
-  font-size: 0.95rem;
-  outline: none;
-}
-
-.task-form input:focus {
-  border-color: var(--accent);
-}
-
-/* 7-Day Table */
-.table-wrapper {
-  overflow-x: auto;
-}
-
-.habit-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 600px;
-}
-
-.habit-table th,
-.habit-table td {
-  padding: 10px 8px;
-  text-align: center;
-  border-bottom: 1px solid var(--border);
-}
-
-.habit-table th {
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.habit-table .task-col {
-  text-align: left;
-  min-width: 190px;
-  font-weight: 500;
-}
-
-/* Custom Checkboxes */
-.day-checkbox {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 26px;
-  height: 26px;
-  border-radius: 7px;
-  background: var(--bg-elevated);
-  border: 1.5px solid #3a3a46;
-  cursor: pointer;
-  display: inline-grid;
-  place-content: center;
-  transition: 0.15s ease;
-}
-
-.day-checkbox:checked {
-  background: var(--accent);
-  border-color: var(--accent);
-}
-
-.day-checkbox:checked::after {
-  content: "✓";
-  color: #fff;
-  font-size: 0.9rem;
   font-weight: 700;
 }
 
-.row-total {
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: var(--text-muted);
+.pill-glow {
+  background: linear-gradient(135deg, var(--pink), var(--coral));
+  border: none;
 }
 
-.delete-btn {
+.btn-chip {
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Add Task Form */
+.add-task-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.add-task-form input {
+  flex: 1;
+  min-width: 0;
+  background: rgba(10, 11, 22, 0.75);
+  border: 1px solid var(--glass-border);
+  color: #fff;
+  padding: 11px 14px;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.add-task-form input:focus {
+  border-color: var(--pink);
+}
+
+.btn-add {
+  background: #ffffff;
+  color: #090a14;
+  border: none;
+  padding: 0 16px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 0.88rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Mobile-First Full-Width Habit Cards (All 7 Days Fit Without Cutoff) */
+.habit-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.habit-item-card {
+  background: var(--glass-elevated);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.habit-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.habit-title {
+  font-size: 0.94rem;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.habit-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.habit-score-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--teal);
+  background: rgba(0, 212, 182, 0.12);
+  padding: 3px 8px;
+  border-radius: 8px;
+}
+
+.btn-delete-task {
+  background: rgba(255, 46, 136, 0.15);
+  border: 1px solid rgba(255, 46, 136, 0.35);
+  color: #ff6ba9;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete-task:active {
+  transform: scale(0.92);
+}
+
+/* 7-Day Equal Grid (Sun - Sat) */
+.days-grid-7 {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.day-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.day-label {
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.day-box {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  max-width: 38px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(10, 11, 22, 0.7);
+  border: 1.5px solid rgba(255, 255, 255, 0.16);
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  transition: all 0.16s ease;
+}
+
+.day-box:checked {
+  background: linear-gradient(135deg, var(--pink), var(--coral));
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(255, 46, 136, 0.45);
+}
+
+.day-box:checked::after {
+  content: "✓";
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+/* Maximized Modern Graph */
+.graph-section {
+  padding: 16px 12px 14px 12px;
+}
+
+.segmented-toggle {
+  display: flex;
+  background: rgba(10, 11, 22, 0.75);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  padding: 3px;
+}
+
+.seg-btn {
   background: transparent;
   border: none;
   color: var(--text-muted);
-  font-size: 1.1rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 7px;
   cursor: pointer;
-  padding: 2px 6px;
-  border-radius: 6px;
 }
 
-.delete-btn:hover {
-  color: var(--accent);
-  background: var(--accent-soft);
+.seg-btn.active {
+  background: #ffffff;
+  color: #090a14;
 }
 
-/* Activities Progress Bars */
-.activities-list {
+.maximized-chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 295px;
+  background: linear-gradient(180deg, rgba(255, 46, 136, 0.08) 0%, rgba(0, 212, 182, 0.04) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 12px 8px 6px 4px;
+}
+
+/* Rank Showcase & Analysis */
+.rank-showcase {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, rgba(255, 46, 136, 0.18), rgba(108, 60, 233, 0.22));
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 18px;
+  padding: 14px;
+  margin-bottom: 14px;
 }
 
-.activity-item-header {
+.rank-icon-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: rgba(10, 11, 22, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: grid;
+  place-content: center;
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.rank-eyebrow {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--teal);
+}
+
+.rank-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.motivation-verdict {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #ffd1e6;
+  margin-top: 2px;
+}
+
+.rank-progress-block {
+  margin-bottom: 16px;
+}
+
+.rank-progress-labels {
   display: flex;
   justify-content: space-between;
-  font-size: 0.88rem;
-  margin-bottom: 5px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 6px;
 }
 
 .progress-track {
   width: 100%;
-  height: 7px;
-  background: var(--bg-elevated);
+  height: 8px;
+  background: rgba(10, 11, 22, 0.8);
   border-radius: 999px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: var(--accent);
+  background: linear-gradient(90deg, var(--pink), var(--coral), var(--teal));
   border-radius: 999px;
-  transition: width 0.3s ease;
+  transition: width 0.35s ease;
 }
 
-/* Charts */
-.charts-grid {
+.stats-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
-@media (max-width: 720px) {
-  .charts-grid {
-    grid-template-columns: 1fr;
-  }
+.stat-tile {
+  background: var(--glass-elevated);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 11px 12px;
 }
 
-.chart-box {
-  position: relative;
-  height: 230px;
-  width: 100%;
-}
-
-/* Weekly Analysis */
-.analysis-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.stat-box {
-  background: var(--bg-elevated);
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-}
-
-.stat-label {
-  font-size: 0.78rem;
+.stat-tile-label {
+  font-size: 0.72rem;
   color: var(--text-muted);
+  margin-bottom: 3px;
+}
+
+.stat-tile-val {
+  font-size: 0.96rem;
+  font-weight: 700;
+}
+
+.breakdown-heading {
+  font-size: 0.86rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.activities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.activity-row-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
   margin-bottom: 4px;
 }
 
-.stat-value {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--text-primary);
+/* Native App Bottom Navigation Bar */
+.bottom-nav {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 24px);
+  max-width: 440px;
+  background: rgba(15, 17, 30, 0.88);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 6px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+  z-index: 100;
 }
 
-.analysis-summary {
-  background: var(--bg-elevated);
-  border-left: 3px solid var(--accent);
-  padding: 12px 14px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  color: #dcdce2;
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 6px 4px;
+  border-radius: 999px;
+  gap: 2px;
+  transition: 0.2s ease;
+}
+
+.nav-icon {
+  font-size: 1rem;
+}
+
+.nav-item.active {
+  background: linear-gradient(135deg, var(--pink), var(--coral));
+  color: #ffffff;
 }

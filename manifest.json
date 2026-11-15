@@ -1,11 +1,12 @@
 {
-  "name": "Discipline Weekly Habit Tracker",
+  "name": "Discipline — Habit & Rank Tracker",
   "short_name": "Discipline",
-  "description": "7-day task checklist with weekly graphs and performance analysis.",
-  "start_url": "./index.html",
+  "description": "7-day habit tracker with daily login streaks, modern analytics graphs, and rank levels.",
+  "start_url": "https://omganeshhiremath.github.io/discipline-tracker/index.html",
+  "scope": "https://omganeshhiremath.github.io/discipline-tracker/",
   "display": "standalone",
-  "background_color": "#0d0d0f",
-  "theme_color": "#0d0d0f",
+  "background_color": "#090a14",
+  "theme_color": "#090a14",
   "orientation": "portrait",
   "icons": [
     {
