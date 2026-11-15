@@ -1,9 +1,9 @@
-]const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const STATE_KEY = "discipline_super_state_v4";
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const STATE_KEY = "discipline_super_state_v5";
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 // =========================================================================
-// ALL 500+ MOTIVATIONAL QUOTES FROM YOUR quotes.txt
-// Locked all day; advances automatically +1 at 12:01 AM with your Streak!
+// ALL 500+ MOTIVATIONAL QUOTES (LOCKED ALL DAY; ADVANCES +1 AT 12:01 AM)
 // =========================================================================
 const RAW_QUOTES_TEXT = `
 "Discipline is choosing what you want most over what you want now."
@@ -544,29 +544,11 @@ const RAW_QUOTES_TEXT = `
 "Finish strong, every single day."
 `;
 
-function parseQuotes(raw) {
-  return raw
-    .split(/\r?\n/)
-    .map((l) => l.trim())
-    .filter((l) => l.length > 0)
-    .map((l) => l.replace(/^["“]+|["”]+$/g, ""));
-}
-
-let QUOTES_LIST = parseQuotes(RAW_QUOTES_TEXT);
-
-// Optional sync: if you also upload a quotes.txt file with additional lines later, it loads automatically
-fetch("./quotes.txt")
-  .then((r) => (r.ok ? r.text() : null))
-  .then((txt) => {
-    if (txt) {
-      const parsed = parseQuotes(txt);
-      if (parsed.length > 0) {
-        QUOTES_LIST = parsed;
-        syncStreakAndClock();
-      }
-    }
-  })
-  .catch(() => {});
+const QUOTES_LIST = RAW_QUOTES_TEXT
+  .split(/\r?\n/)
+  .map((l) => l.trim())
+  .filter((l) => l.length > 0)
+  .map((l) => l.replace(/^["“]+|["”]+$/g, ""));
 
 const BADGES_CATALOG = [
   { id: "first_step", icon: "⚡", name: "First Blood", desc: "Complete your first habit" },
@@ -612,17 +594,12 @@ function dayDiff(prevStr, currStr) {
 // 2. STATE INITIALIZATION
 // ==========================================
 function loadInitialState() {
-  const saved = JSON.parse(localStorage.getItem(STATE_KEY));
-  if (saved) return saved;
+  try {
+    const saved = JSON.parse(localStorage.getItem(STATE_KEY));
+    if (saved && Array.isArray(saved.habits)) return saved;
+  } catch (_) {}
 
-  const oldTasks = JSON.parse(localStorage.getItem("discipline_tasks_v2")) || [
-    { id: "t1", name: "Daily 30 min Exercise", checks: [true, true, false, false, false, false, false] },
-    { id: "t2", name: "Read 20 Pages", checks: [true, false, false, false, false, false, false] },
-    { id: "t3", name: "Drink 8 Glasses Water", checks: [true, true, false, false, false, false, false] }
-  ];
-  const oldStreak = JSON.parse(localStorage.getItem("discipline_login_streak_v1")) || { count: 1, lastDate: getDayKey() };
   const currentWeek = getWeekStartKey(0);
-
   return {
     userName: "Warrior",
     theme: "aurora",
@@ -637,29 +614,64 @@ function loadInitialState() {
     notifPromptDismissed: false,
     lastNotifDay: "",
     lastDangerNotifDay: "",
+    claimedChallenges: {},
     streak: {
-      count: oldStreak.count || 1,
-      longest: oldStreak.count || 1,
-      lastDate: oldStreak.lastDate || getDayKey(),
+      count: 1,
+      longest: 1,
+      lastDate: getDayKey(),
       freezesLeft: 1,
       freezeMonth: getMonthKey()
     },
-    habits: oldTasks.map((t, idx) => ({
-      id: t.id || "h_" + Date.now() + idx,
-      name: t.name,
-      category: idx === 0 ? "Fitness" : idx === 1 ? "Study" : "Health",
-      type: t.name.toLowerCase().includes("8 glasses") ? "qty" : "check",
-      qtyTarget: 8,
-      priority: idx === 0,
-      note: "",
-      timerMins: idx === 1 ? 25 : 0,
-      reminderTime: "",
-      activeDays: [true, true, true, true, true, true, true],
-      archived: false,
-      weekLogs: { [currentWeek]: Array.isArray(t.checks) ? [...t.checks] : [false, false, false, false, false, false, false] },
-      qtyLogs: {}
-    })),
-    todos: [{ id: "td_1", text: "Computer Class work" }],
+    habits: [
+      {
+        id: "h_1",
+        name: "Daily 30 min Exercise",
+        category: "Fitness",
+        type: "check",
+        qtyTarget: 1,
+        priority: true,
+        note: "No zero days",
+        timerMins: 30,
+        reminderTime: "",
+        activeDays: [true, true, true, true, true, true, true],
+        archived: false,
+        weekLogs: { [currentWeek]: [true, true, false, false, false, false, false] },
+        qtyLogs: {}
+      },
+      {
+        id: "h_2",
+        name: "Read 20 Pages",
+        category: "Study",
+        type: "check",
+        qtyTarget: 1,
+        priority: false,
+        note: "Deep focus reading",
+        timerMins: 25,
+        reminderTime: "",
+        activeDays: [true, true, true, true, true, true, true],
+        archived: false,
+        weekLogs: { [currentWeek]: [true, false, false, false, false, false, false] },
+        qtyLogs: {}
+      },
+      {
+        id: "h_3",
+        name: "Drink 8 Glasses Water",
+        category: "Health",
+        type: "qty",
+        qtyTarget: 8,
+        priority: false,
+        note: "",
+        timerMins: 0,
+        reminderTime: "",
+        activeDays: [true, true, true, true, true, true, true],
+        archived: false,
+        weekLogs: { [currentWeek]: [true, true, false, false, false, false, false] },
+        qtyLogs: { [currentWeek]: [8, 8, 0, 0, 0, 0, 0] }
+      }
+    ],
+    todos: [
+      { id: "td_1", text: "Computer Class work", createdAt: Date.now(), lastOverdueNotifDay: "" }
+    ],
     completedTodosToday: [],
     dailyHistory: {},
     friends: [
@@ -675,6 +687,7 @@ let weekOffset = 0;
 let chartMode = "pct";
 let weeklyChart = null;
 let lastDeletedTodo = null;
+let forceAppPreview = false;
 let activeTimer = { habitId: null, totalSec: 0, remainingSec: 0, interval: null, running: false };
 
 function saveState() {
@@ -682,7 +695,40 @@ function saveState() {
 }
 
 // ==========================================
-// 3. NOTIFICATIONS & TASK + TO-DO REMINDERS
+// 3. WEBSITE VS INSTALLED APK ROUTING
+// ==========================================
+function isInstalledAppMode() {
+  if (forceAppPreview) return true;
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("mode") === "app") return true;
+  if (window.matchMedia("(display-mode: standalone)").matches) return true;
+  if (window.navigator.standalone === true) return true;
+  if (document.referrer && document.referrer.includes("android-app://")) return true;
+  return false;
+}
+
+function applyEnvironmentAndTheme() {
+  const inApp = isInstalledAppMode();
+  document.getElementById("webLandingView").classList.toggle("hidden", inApp);
+  document.getElementById("mainAppShell").classList.toggle("hidden", !inApp);
+
+  document.documentElement.setAttribute("data-theme", state.theme || "aurora");
+  document.documentElement.setAttribute("data-accent", state.accent || "pink");
+  document.getElementById("userNameInput").value = state.userName || "Warrior";
+  document.getElementById("dailyReminderTimeInput").value = state.reminderTime || "20:00";
+  document.getElementById("toggleSoundBtn").textContent =
+    state.soundEnabled === false ? "🔇 Sound: OFF" : "🔊 Sound: ON";
+}
+
+document.getElementById("previewAppInBrowserBtn").addEventListener("click", () => {
+  forceAppPreview = true;
+  applyEnvironmentAndTheme();
+  setupNotificationPrompt();
+  renderAll();
+});
+
+// ==========================================
+// 4. NOTIFICATIONS (STREAK ENDING + 1-DAY OVERDUE TO-DOS)
 // ==========================================
 function sendSystemNotification(title, body) {
   if (!("Notification" in window) || Notification.permission !== "granted") return;
@@ -698,10 +744,14 @@ function sendSystemNotification(title, body) {
         });
       })
       .catch(() => {
-        new Notification(title, { body, icon: "./icon-512.png" });
+        try {
+          new Notification(title, { body, icon: "./icon-512.png" });
+        } catch (_) {}
       });
   } else {
-    new Notification(title, { body, icon: "./icon-512.png" });
+    try {
+      new Notification(title, { body, icon: "./icon-512.png" });
+    } catch (_) {}
   }
 }
 
@@ -726,13 +776,13 @@ function setupNotificationPrompt() {
 
   if (Notification.permission === "granted") {
     document.getElementById("notifStatusText").textContent =
-      `✅ Notifications active! Daily reminder at ${state.reminderTime} + 9:00 PM Streak Protection.`;
+      `✅ Active! Daily reminder at ${state.reminderTime}, Streak-Ending alert at 9:00 PM & 1-Day Overdue To-Do alerts.`;
   }
 }
 
 async function requestNotificationAccess() {
   if (!("Notification" in window)) {
-    showToast("Notifications are not supported in this browser.");
+    showToast("Notifications are not supported here.");
     return;
   }
   const perm = await Notification.requestPermission();
@@ -740,13 +790,14 @@ async function requestNotificationAccess() {
   if (perm === "granted") {
     const { tasksLeft, todosLeft } = getPendingSummary();
     sendSystemNotification(
-      "🔥 Discipline Reminders Enabled!",
-      `You have ${tasksLeft} daily task(s) and ${todosLeft} To-Do item(s) left today. Crush them before 12:01 AM!`
+      "🔥 Discipline Notifications Allowed!",
+      `You have ${tasksLeft} habit(s) and ${todosLeft} To-Do item(s) pending. We'll alert you before your streak ends or if a To-Do crosses 1 day!`
     );
-    showToast("✅ Notifications allowed!");
+    showToast("✅ Notifications enabled!");
     setupNotificationPrompt();
+    checkScheduledAndOverdueNotifications();
   } else {
-    showToast("⚠️ Notification permission blocked in browser/phone settings.");
+    showToast("⚠️ Please allow notifications in your phone's App Info settings.");
   }
 }
 
@@ -770,43 +821,58 @@ document.getElementById("testNotifBtn").addEventListener("click", () => {
   }
   const { tasksLeft, todosLeft } = getPendingSummary();
   sendSystemNotification(
-    "⚡ Discipline Daily Check-In",
-    `Reminder: Complete your ${tasksLeft} remaining daily task(s) and ${todosLeft} To-Do item(s) before 12:01 AM!`
+    "⚠️ Your Streak is About to End!",
+    `Finish your ${tasksLeft} daily habit(s) and ${todosLeft} To-Do item(s) before 12:01 AM!`
   );
-  showToast("🔔 Reminder notification sent!");
+  showToast("🔔 Test notification sent!");
 });
 
-function checkScheduledReminders() {
+function checkScheduledAndOverdueNotifications() {
   const now = new Date();
+  const nowMs = now.getTime();
   const hh = String(now.getHours()).padStart(2, "0");
   const mm = String(now.getMinutes()).padStart(2, "0");
   const currentHHMM = `${hh}:${mm}`;
   const todayKey = getDayKey(now);
   const { tasksLeft, todosLeft } = getPendingSummary();
 
-  if (tasksLeft === 0 && todosLeft === 0) return;
+  // A. Check if ANY To-Do item has crossed 1 full day (24 hours) unfinished!
+  let stateChanged = false;
+  state.todos.forEach((todo) => {
+    const createdAt = todo.createdAt || nowMs;
+    if (nowMs - createdAt >= ONE_DAY_MS && todo.lastOverdueNotifDay !== todayKey) {
+      todo.lastOverdueNotifDay = todayKey;
+      stateChanged = true;
+      const daysOverdue = Math.floor((nowMs - createdAt) / ONE_DAY_MS);
+      sendSystemNotification(
+        `⏰ Overdue To-Do (${daysOverdue}d+): ${todo.text}`,
+        `You added "${todo.text}" over ${daysOverdue} day(s) ago and still haven't completed it. Finish & tick it off today!`
+      );
+    }
+  });
+  if (stateChanged) saveState();
 
-  // 1. User's chosen daily reminder time
-  if (currentHHMM === state.reminderTime && state.lastNotifDay !== todayKey) {
+  // B. User's chosen daily reminder time
+  if ((tasksLeft > 0 || todosLeft > 0) && currentHHMM === state.reminderTime && state.lastNotifDay !== todayKey) {
     state.lastNotifDay = todayKey;
     saveState();
     sendSystemNotification(
-      "⏰ Time to Complete Today's Tasks & To-Dos!",
-      `You still have ${tasksLeft} daily habit(s) and ${todosLeft} To-Do item(s) waiting. Finish strong!`
+      "⚡ Daily Discipline Reminder",
+      `You have ${tasksLeft} daily task(s) and ${todosLeft} To-Do item(s) remaining today.`
     );
   }
 
-  // 2. 9:00 PM Streak-in-Danger Alert
-  if (now.getHours() === 21 && now.getMinutes() === 0 && state.lastDangerNotifDay !== todayKey) {
+  // C. 9:00 PM Streak-About-to-End Alert
+  if ((tasksLeft > 0 || todosLeft > 0) && now.getHours() === 21 && now.getMinutes() === 0 && state.lastDangerNotifDay !== todayKey) {
     state.lastDangerNotifDay = todayKey;
     saveState();
     sendSystemNotification(
-      `⚠️ ${state.streak.count}-Day Streak in Danger!`,
-      `Finish your ${tasksLeft} daily task(s) and ${todosLeft} To-Do item(s) before 12:01 AM!`
+      `⚠️ Your ${state.streak.count}-Day Streak is About to End!`,
+      `Complete your remaining ${tasksLeft} habit(s) and ${todosLeft} To-Do(s) before 12:01 AM or lose your streak!`
     );
   }
 
-  // 3. Per-habit custom reminder times
+  // D. Per-habit custom reminder time
   const todayIdx = getRolledDate(now).getDay();
   const wkKey = getWeekStartKey(0);
   state.habits.forEach((h) => {
@@ -815,14 +881,14 @@ function checkScheduledReminders() {
       const tag = `${todayKey}_${h.id}`;
       if (!done && h._lastAlert !== tag) {
         h._lastAlert = tag;
-        sendSystemNotification(`🔔 Habit Reminder: ${h.name}`, h.note || "Complete this task now to keep your streak alive!");
+        sendSystemNotification(`🔔 Habit Time: ${h.name}`, h.note || "Complete this task now to protect your streak!");
       }
     }
   });
 }
 
 // ==========================================
-// 4. SOUND EFFECTS, CONFETTI & STANDALONE CHECK
+// 5. SOUND EFFECTS & CONFETTI
 // ==========================================
 function playTone(type = "check") {
   if (state.soundEnabled === false) return;
@@ -903,26 +969,8 @@ function showToast(msg, withUndo = false) {
   bar._timer = setTimeout(() => bar.classList.add("hidden"), 3500);
 }
 
-function applyEnvironmentAndTheme() {
-  const isStandalone =
-    window.matchMedia("(display-mode: standalone)").matches ||
-    window.navigator.standalone === true ||
-    document.referrer.includes("android-app://");
-
-  if (isStandalone) {
-    document.getElementById("webApkPill").classList.add("hidden");
-  }
-
-  document.documentElement.setAttribute("data-theme", state.theme || "aurora");
-  document.documentElement.setAttribute("data-accent", state.accent || "pink");
-  document.getElementById("userNameInput").value = state.userName || "Warrior";
-  document.getElementById("dailyReminderTimeInput").value = state.reminderTime || "20:00";
-  document.getElementById("toggleSoundBtn").textContent =
-    state.soundEnabled === false ? "🔇 Sound: OFF" : "🔊 Sound: ON";
-}
-
 // ==========================================
-// 5. 12:01 AM STREAK +1 & LOCKED DAILY QUOTE
+// 6. 12:01 AM STREAK +1 & LOCKED DAILY QUOTE
 // ==========================================
 function syncStreakAndClock() {
   const todayKey = getDayKey();
@@ -935,14 +983,13 @@ function syncStreakAndClock() {
 
   const diff = dayDiff(state.streak.lastDate, todayKey);
   if (diff === 1) {
-    // Streak advances +1 after 12:01 AM -> unlock the next motivational quote!
     state.streak.count += 1;
     state.streak.lastDate = todayKey;
     state.quoteIndex = ((state.quoteIndex || 0) + 1) % QUOTES_LIST.length;
     if (state.streak.count > state.streak.longest) {
       state.streak.longest = state.streak.count;
     }
-    showToast(`🔥 Streak +1 (${state.streak.count} Days) & New Daily Quote Unlocked!`);
+    showToast(`🔥 Streak +1 (${state.streak.count} Days) & New Daily Quote!`);
   } else if (diff > 1) {
     if (diff === 2 && state.streak.freezesLeft > 0) {
       state.streak.freezesLeft -= 1;
@@ -964,17 +1011,16 @@ function syncStreakAndClock() {
   document.getElementById("freezeVaultStat").textContent = state.streak.freezesLeft;
 
   const qIdx = (state.quoteIndex || 0) % QUOTES_LIST.length;
-  const activeQuote = QUOTES_LIST[qIdx];
   document.getElementById("quoteCounterLabel").textContent =
-    `DAILY QUOTE #${qIdx + 1}/${QUOTES_LIST.length} • CHANGES AT 12:01 AM`;
-  document.getElementById("dailyQuoteText").textContent = `"${activeQuote}"`;
+    `DAILY QUOTE #${qIdx + 1}/${QUOTES_LIST.length} • UPDATES AT 12:01 AM`;
+  document.getElementById("dailyQuoteText").textContent = `"${QUOTES_LIST[qIdx]}"`;
 
   const now = new Date();
   const nextRollover = new Date(now);
   nextRollover.setHours(24, 1, 0, 0);
   const minsLeft = Math.max(1, Math.floor((nextRollover - now) / 60000));
   document.getElementById("resetCountdownText").textContent =
-    `Next streak +1 & quote in ${Math.floor(minsLeft / 60)}h ${minsLeft % 60}m (12:01 AM)`;
+    `Next streak +1 in ${Math.floor(minsLeft / 60)}h ${minsLeft % 60}m (12:01 AM)`;
 }
 
 document.getElementById("useFreezeBtn").addEventListener("click", () => {
@@ -991,7 +1037,7 @@ document.getElementById("useFreezeBtn").addEventListener("click", () => {
 });
 
 // ==========================================
-// 6. XP & RPG LEVEL SYSTEM
+// 7. XP & RPG LEVEL SYSTEM
 // ==========================================
 function awardXP(amount) {
   state.xp = Math.max(0, (state.xp || 0) + amount);
@@ -1013,7 +1059,7 @@ function renderXPBar() {
 }
 
 // ==========================================
-// 7. 7-DAY HABIT GRID & SCORING
+// 8. 7-DAY HABIT GRID & SCORING
 // ==========================================
 function ensureWeekLog(habit, wkKey) {
   if (!habit.weekLogs) habit.weekLogs = {};
@@ -1053,7 +1099,7 @@ function computeWeekMetrics(wkKey) {
   return { activeHabits, dailyWeightedEarned, dailyWeightedPossible, dailyRawDone, dailyPercentages, totalEarned, totalPossible, overallPct };
 }
 
-function toggleHabitCheck(habitId, dayIdx) {
+window.toggleHabitCheck = function (habitId, dayIdx) {
   const wkKey = getWeekStartKey(weekOffset);
   const habit = state.habits.find((h) => h.id === habitId);
   if (!habit || !habit.activeDays[dayIdx]) return;
@@ -1089,9 +1135,9 @@ function toggleHabitCheck(habitId, dayIdx) {
 
   saveState();
   renderAll();
-}
+};
 
-function stepHabitQuantity(habitId, dayIdx, delta) {
+window.stepHabitQuantity = function (habitId, dayIdx, delta) {
   const wkKey = getWeekStartKey(weekOffset);
   const habit = state.habits.find((h) => h.id === habitId);
   if (!habit) return;
@@ -1104,23 +1150,23 @@ function stepHabitQuantity(habitId, dayIdx, delta) {
   const wasDone = habit.weekLogs[wkKey][dayIdx];
   const isNowDone = next >= habit.qtyTarget;
   if (wasDone !== isNowDone) {
-    toggleHabitCheck(habitId, dayIdx);
+    window.toggleHabitCheck(habitId, dayIdx);
   } else {
     saveState();
     renderAll();
   }
-}
+};
 
-function moveHabitOrder(habitId, dir) {
+window.moveHabitOrder = function (habitId, dir) {
   const idx = state.habits.findIndex((h) => h.id === habitId);
   const targetIdx = idx + dir;
   if (idx < 0 || targetIdx < 0 || targetIdx >= state.habits.length) return;
   [state.habits[idx], state.habits[targetIdx]] = [state.habits[targetIdx], state.habits[idx]];
   saveState();
   renderAll();
-}
+};
 
-function editHabit(habitId) {
+window.editHabit = function (habitId) {
   const habit = state.habits.find((h) => h.id === habitId);
   if (!habit) return;
   const newName = prompt("Edit Habit Name:", habit.name);
@@ -1134,31 +1180,31 @@ function editHabit(habitId) {
   saveState();
   renderAll();
   showToast("Habit updated!");
-}
+};
 
-function archiveHabit(habitId) {
+window.archiveHabit = function (habitId) {
   const habit = state.habits.find((h) => h.id === habitId);
   if (!habit) return;
   habit.archived = true;
   saveState();
   showToast(`Removed "${habit.name}" (saved in Archive)`);
   renderAll();
-}
+};
 
-function restoreHabit(habitId) {
+window.restoreHabit = function (habitId) {
   const habit = state.habits.find((h) => h.id === habitId);
   if (habit) {
     habit.archived = false;
     saveState();
     renderAll();
   }
-}
+};
 
-function deleteHabitForever(habitId) {
+window.deleteHabitForever = function (habitId) {
   state.habits = state.habits.filter((h) => h.id !== habitId);
   saveState();
   renderAll();
-}
+};
 
 function renderHabitCards() {
   const wkKey = getWeekStartKey(weekOffset);
@@ -1232,8 +1278,8 @@ function renderHabitCards() {
           ${h.timerMins > 0 ? `<button type="button" class="mini-action-btn" onclick="openTimerModal('${h.id}')" title="Start ${h.timerMins}m Focus Timer">⏱️</button>` : ""}
           <button type="button" class="mini-action-btn" onclick="moveHabitOrder('${h.id}', -1)" title="Move Up">↑</button>
           <button type="button" class="mini-action-btn" onclick="moveHabitOrder('${h.id}', 1)" title="Move Down">↓</button>
-          <button type="button" class="mini-action-btn" onclick="editHabit('${h.id}')" title="Edit Task">✏️</button>
-          <button type="button" class="mini-action-btn" onclick="archiveHabit('${h.id}')" title="Remove Task">🗑️</button>
+          <button type="button" class="mini-action-btn" onclick="editHabit('${h.id}')" title="Edit">✏️</button>
+          <button type="button" class="mini-action-btn" onclick="archiveHabit('${h.id}')" title="Remove">🗑️</button>
         </div>
       </div>
       ${qtyHTML}
@@ -1244,7 +1290,7 @@ function renderHabitCards() {
 }
 
 // ==========================================
-// 8. NUMBERED TO-DO LIST (TICK TO COMPLETE & REMOVE)
+// 9. SEPARATE TO-DO LIST + 1-DAY OVERDUE DETECTOR
 // ==========================================
 document.getElementById("todoForm").addEventListener("submit", (e) => {
   e.preventDefault();
@@ -1252,13 +1298,19 @@ document.getElementById("todoForm").addEventListener("submit", (e) => {
   const text = input.value.trim();
   if (!text) return;
 
-  state.todos.push({ id: "td_" + Date.now(), text });
+  state.todos.push({
+    id: "td_" + Date.now(),
+    text,
+    createdAt: Date.now(),
+    lastOverdueNotifDay: ""
+  });
   input.value = "";
   saveState();
   renderAll();
+  showToast(`Added "${text}" to To-Do list!`);
 });
 
-function completeTodoItem(todoId) {
+window.completeTodoItem = function (todoId) {
   const idx = state.todos.findIndex((t) => t.id === todoId);
   if (idx === -1) return;
 
@@ -1280,10 +1332,10 @@ function completeTodoItem(todoId) {
   setTimeout(() => {
     renderAll();
     showToast(`✓ Completed "${removed.text}" (+15 XP)`, true);
-  }, 300);
-}
+  }, 280);
+};
 
-function editTodoItem(todoId) {
+window.editTodoItem = function (todoId) {
   const item = state.todos.find((t) => t.id === todoId);
   if (!item) return;
   const updated = prompt("Edit To-Do item:", item.text);
@@ -1292,7 +1344,7 @@ function editTodoItem(todoId) {
     saveState();
     renderAll();
   }
-}
+};
 
 document.getElementById("toastUndoBtn").addEventListener("click", () => {
   if (!lastDeletedTodo) return;
@@ -1313,21 +1365,31 @@ document.getElementById("clearCompletedTodosBtn").addEventListener("click", () =
 
 function renderTodos() {
   const listEl = document.getElementById("todoListContainer");
+  const nowMs = Date.now();
   document.getElementById("todoCountBadge").textContent = `${state.todos.length} Pending`;
   document.getElementById("todoCompletedCount").textContent = state.completedTodosToday.length;
 
   listEl.innerHTML = "";
   if (state.todos.length === 0) {
-    listEl.innerHTML = `<p class="muted" style="text-align:center; padding:18px 0;">No pending To-Dos. Add any work above!</p>`;
+    listEl.innerHTML = `<p class="muted" style="text-align:center; padding:24px 0;">Your To-Do workspace is clear! Add any work above.</p>`;
   } else {
     state.todos.forEach((item, index) => {
+      const ageMs = nowMs - (item.createdAt || nowMs);
+      const isOverdue = ageMs >= ONE_DAY_MS;
+      const daysOld = Math.floor(ageMs / ONE_DAY_MS);
+
       const row = document.createElement("div");
-      row.className = "todo-row-card";
+      row.className = `todo-row-card ${isOverdue ? "overdue-todo" : ""}`;
       row.id = `todo-row-${item.id}`;
       row.innerHTML = `
         <div class="todo-left">
           <span class="todo-number">${index + 1}.</span>
-          <span class="todo-text">${escapeHTML(item.text)}</span>
+          <div class="todo-text-block">
+            <span class="todo-text">${escapeHTML(item.text)}</span>
+            <span class="todo-age-tag ${isOverdue ? "overdue" : ""}">
+              ${isOverdue ? `⚠️ Overdue (${daysOld} day${daysOld > 1 ? "s" : ""} pending) — Finish today!` : "Added today"}
+            </span>
+          </div>
         </div>
         <div class="todo-right-controls">
           <button type="button" class="mini-action-btn" onclick="editTodoItem('${item.id}')" title="Edit">✏️</button>
@@ -1344,16 +1406,18 @@ function renderTodos() {
   }
 
   document.getElementById("completedTodoList").innerHTML = state.completedTodosToday
-    .slice(0, 10)
+    .slice(0, 12)
     .map((c) => `<div class="completed-todo-item">✓ ${escapeHTML(c.text)} (${c.time})</div>`)
     .join("");
 }
 
 // ==========================================
-// 9. MAXIMIZED GRAPH, WEEK HISTORY & HEATMAP
+// 10. MAXIMIZED GRAPH, WEEK HISTORY & HEATMAP
 // ==========================================
 function renderGraphAndInsights(metrics) {
-  const ctx = document.getElementById("modernWeeklyChart").getContext("2d");
+  const canvasEl = document.getElementById("modernWeeklyChart");
+  if (!canvasEl || typeof Chart === "undefined") return;
+  const ctx = canvasEl.getContext("2d");
   if (weeklyChart) weeklyChart.destroy();
 
   const accentHex = getComputedStyle(document.documentElement).getPropertyValue("--accent-1").trim() || "#ff2e88";
@@ -1473,7 +1537,7 @@ function renderHeatmap() {
 }
 
 // ==========================================
-// 10. EXACT RANK LEVELS, CHALLENGES & BADGES
+// 11. RANK LEVELS, CHALLENGES, BADGES & REPORT
 // ==========================================
 function evaluateRank(pct) {
   let rank = "Noob";
@@ -1524,6 +1588,19 @@ function evaluateRank(pct) {
   return { rank, emoji, nextLabel, message };
 }
 
+window.claimChallengeXP = function (challengeId, xpReward) {
+  const wkKey = getWeekStartKey(0);
+  const tag = `${wkKey}_${challengeId}`;
+  if (state.claimedChallenges?.[tag]) return;
+  if (!state.claimedChallenges) state.claimedChallenges = {};
+  state.claimedChallenges[tag] = true;
+  awardXP(xpReward);
+  playTone("fanfare");
+  launchConfetti(45);
+  showToast(`🎉 Challenge Claimed! +${xpReward} XP`);
+  renderAll();
+};
+
 function renderBadges(overallPct) {
   const unlockedSet = new Set();
   if ((state.totalChecksEver || 0) >= 1) unlockedSet.add("first_step");
@@ -1570,19 +1647,27 @@ function renderRankTab(metrics) {
     playTone("fanfare");
   }
 
+  const wkKey = getWeekStartKey(weekOffset);
   const perfectDays = metrics.dailyPercentages.filter((p) => p === 100).length;
   const challenges = [
-    { name: "Hit 90%+ Grand Master Score", curr: Math.min(pct, 90), target: 90, unit: "%" },
-    { name: "Achieve 3 Perfect 100% Days", curr: Math.min(perfectDays, 3), target: 3, unit: " days" }
+    { id: "c_gm", name: "Hit 90%+ Grand Master Score", curr: Math.min(pct, 90), target: 90, unit: "%", xp: 100 },
+    { id: "c_3d", name: "Achieve 3 Perfect 100% Days", curr: Math.min(perfectDays, 3), target: 3, unit: " days", xp: 75 }
   ];
+
   document.getElementById("weeklyChallengesList").innerHTML = challenges
     .map((c) => {
       const barPct = Math.round((c.curr / c.target) * 100);
+      const done = c.curr >= c.target;
+      const claimed = state.claimedChallenges?.[`${wkKey}_${c.id}`];
       return `
         <div class="challenge-card">
           <div class="challenge-top">
             <span>${c.name}</span>
-            <span>${c.curr}/${c.target}${c.unit}</span>
+            ${
+              done && !claimed
+                ? `<button type="button" class="btn-primary-sm" onclick="claimChallengeXP('${c.id}', ${c.xp})">Claim +${c.xp} XP</button>`
+                : `<span>${claimed ? "✅ Claimed" : `${c.curr}/${c.target}${c.unit}`}</span>`
+            }
           </div>
           <div class="progress-track"><div class="progress-fill" style="width:${barPct}%"></div></div>
         </div>
@@ -1606,7 +1691,6 @@ function renderRankTab(metrics) {
     )
     .join("");
 
-  const wkKey = getWeekStartKey(weekOffset);
   document.getElementById("activitiesList").innerHTML = metrics.activeHabits
     .map((h) => {
       const activeTotal = h.activeDays.filter(Boolean).length;
@@ -1628,9 +1712,9 @@ function renderRankTab(metrics) {
 }
 
 // ==========================================
-// 11. FOCUS / POMODORO TIMER & REPORT CARD
+// 12. FOCUS TIMER & REPORT CARD GENERATOR
 // ==========================================
-function openTimerModal(habitId) {
+window.openTimerModal = function (habitId) {
   const habit = state.habits.find((h) => h.id === habitId);
   if (!habit) return;
   clearInterval(activeTimer.interval);
@@ -1645,7 +1729,7 @@ function openTimerModal(habitId) {
   document.getElementById("timerStartPauseBtn").textContent = "▶ Start";
   updateTimerDisplay();
   document.getElementById("timerModal").classList.remove("hidden");
-}
+};
 
 function updateTimerDisplay() {
   const m = String(Math.floor(activeTimer.remainingSec / 60)).padStart(2, "0");
@@ -1679,7 +1763,7 @@ document.getElementById("timerStartPauseBtn").addEventListener("click", () => {
         const h = state.habits.find((item) => item.id === activeTimer.habitId);
         if (h && h.activeDays[todayIdx] && !h.weekLogs[wkKey]?.[todayIdx]) {
           weekOffset = 0;
-          toggleHabitCheck(h.id, todayIdx);
+          window.toggleHabitCheck(h.id, todayIdx);
         }
         showToast("⏱️ Focus Session Complete! +25 XP");
       }
@@ -1780,7 +1864,7 @@ document.getElementById("closeReportModalBtn").addEventListener("click", () => {
 });
 
 // ==========================================
-// 12. SETTINGS, BACKUP, ARCHIVE & EVENTS
+// 13. SETTINGS, BACKUP, ARCHIVE & EVENTS
 // ==========================================
 document.getElementById("openSettingsBtn").addEventListener("click", () => {
   renderArchivedHabits();
@@ -2028,7 +2112,6 @@ function renderAll() {
   document.getElementById("overallScoreBadge").textContent = `${metrics.totalEarned} / ${metrics.totalPossible} pts`;
   document.getElementById("archivedCountBadge").textContent = state.habits.filter((h) => h.archived).length;
 
-  // 9 PM Streak-in-Danger Alert (checks both daily tasks & To-Do list)
   const hourNow = new Date().getHours();
   const incompleteToday = (todayScheduled > 0 && todayDone < todayScheduled) || state.todos.length > 0;
   const showDanger = hourNow >= 21 && incompleteToday;
@@ -2063,7 +2146,9 @@ applyEnvironmentAndTheme();
 setupNotificationPrompt();
 syncStreakAndClock();
 renderAll();
+checkScheduledAndOverdueNotifications();
+
 setInterval(() => {
   syncStreakAndClock();
-  checkScheduledReminders();
+  checkScheduledAndOverdueNotifications();
 }, 20000);

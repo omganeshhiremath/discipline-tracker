@@ -1,4 +1,4 @@
-const CACHE_NAME = "discipline-app-v5";
+const CACHE_NAME = "discipline-app-v6";
 const ASSETS = [
   "./",
   "./index.html",
@@ -31,7 +31,7 @@ self.addEventListener("notificationclick", (event) => {
       for (const client of clientList) {
         if ("focus" in client) return client.focus();
       }
-      if (clients.openWindow) return clients.openWindow("./index.html");
+      if (clients.openWindow) return clients.openWindow("./index.html?mode=app");
     })
   );
 });

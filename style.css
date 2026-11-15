@@ -1,28 +1,28 @@
 :root {
   --bg-dark: #080912;
-  --glass-bg: rgba(18, 20, 36, 0.82);
-  --glass-elevated: rgba(29, 32, 54, 0.88);
+  --glass-bg: rgba(18, 20, 36, 0.84);
+  --glass-elevated: rgba(29, 32, 54, 0.9);
   --glass-border: rgba(255, 255, 255, 0.12);
   --text-main: #ffffff;
   --text-muted: #9aa2c0;
   --accent-1: #ff2e88;
   --accent-2: #ff6a45;
   --teal: #00d4b6;
-  --input-bg: rgba(9, 10, 20, 0.78);
+  --input-bg: rgba(9, 10, 20, 0.8);
 }
 
 html[data-theme="oled"] {
   --bg-dark: #000000;
-  --glass-bg: rgba(14, 14, 18, 0.95);
-  --glass-elevated: rgba(24, 24, 30, 0.96);
+  --glass-bg: rgba(14, 14, 18, 0.96);
+  --glass-elevated: rgba(24, 24, 30, 0.97);
   --input-bg: #08080a;
 }
 
 html[data-theme="light"] {
   --bg-dark: #f2f4fa;
-  --glass-bg: rgba(255, 255, 255, 0.93);
-  --glass-elevated: rgba(241, 244, 252, 0.97);
-  --glass-border: rgba(15, 23, 42, 0.11);
+  --glass-bg: rgba(255, 255, 255, 0.94);
+  --glass-elevated: rgba(241, 244, 252, 0.98);
+  --glass-border: rgba(15, 23, 42, 0.12);
   --text-main: #0f172a;
   --text-muted: #52607a;
   --input-bg: #ffffff;
@@ -47,7 +47,6 @@ body {
   color: var(--text-main);
   min-height: 100vh;
   overflow-x: hidden;
-  padding-bottom: 96px;
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
@@ -55,14 +54,14 @@ body {
 
 .aurora-bg {
   position: fixed;
-  top: -130px;
+  top: -140px;
   left: -15%;
   width: 130%;
-  height: 460px;
-  background: radial-gradient(circle at 20% 25%, color-mix(in srgb, var(--accent-1) 42%, transparent), transparent 55%),
-              radial-gradient(circle at 82% 20%, color-mix(in srgb, var(--accent-2) 38%, transparent), transparent 52%),
-              radial-gradient(circle at 50% 80%, rgba(0, 212, 182, 0.22), transparent 60%);
-  filter: blur(48px);
+  height: 500px;
+  background: radial-gradient(circle at 20% 25%, color-mix(in srgb, var(--accent-1) 45%, transparent), transparent 55%),
+              radial-gradient(circle at 82% 20%, color-mix(in srgb, var(--accent-2) 40%, transparent), transparent 52%),
+              radial-gradient(circle at 50% 80%, rgba(0, 212, 182, 0.24), transparent 60%);
+  filter: blur(50px);
   z-index: -1;
   pointer-events: none;
 }
@@ -76,10 +75,226 @@ body {
   z-index: 999;
 }
 
+/* ========================================================= */
+/* 1. BEAUTIFUL WEBSITE LANDING PAGE (BROWSER ONLY)          */
+/* ========================================================= */
+.web-landing {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 16px 48px 16px;
+}
+
+.landing-container {
+  max-width: 680px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.landing-badge {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #5eead4;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 7px 16px;
+  border-radius: 999px;
+  margin-bottom: 22px;
+}
+
+.landing-icon-wrap {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.landing-app-icon {
+  width: 104px;
+  height: 104px;
+  border-radius: 26px;
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  object-fit: cover;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.55);
+}
+
+.landing-icon-glow {
+  position: absolute;
+  inset: -12px;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2), var(--teal));
+  border-radius: 34px;
+  filter: blur(22px);
+  opacity: 0.55;
+  z-index: 1;
+}
+
+.landing-title {
+  font-size: clamp(2.1rem, 6vw, 3.1rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #ffffff 25%, #ffbe3b 65%, #ff6a45 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 14px;
+}
+
+.landing-subtitle {
+  font-size: 1.06rem;
+  color: #cbd5e1;
+  line-height: 1.6;
+  max-width: 540px;
+  margin-bottom: 28px;
+}
+
+/* HUGE PROMINENT DOWNLOAD APK BUTTON */
+.mega-apk-btn {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: linear-gradient(135deg, #ff2e88 0%, #ff6a45 55%, #ffb800 100%);
+  color: #ffffff;
+  text-decoration: none;
+  padding: 20px 28px;
+  border-radius: 22px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 18px 45px rgba(255, 46, 136, 0.48), 0 0 0 6px rgba(255, 46, 136, 0.14);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-bottom: 26px;
+}
+
+.mega-apk-btn:hover,
+.mega-apk-btn:active {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 24px 55px rgba(255, 46, 136, 0.62);
+}
+
+.mega-btn-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.25);
+  display: grid;
+  place-content: center;
+  font-size: 1.6rem;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+.mega-btn-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.mega-btn-text strong {
+  font-size: 1.28rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+
+.mega-btn-text small {
+  font-size: 0.78rem;
+  opacity: 0.92;
+  font-weight: 600;
+}
+
+.install-steps-card {
+  width: 100%;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 22px;
+  padding: 18px;
+  margin-bottom: 20px;
+}
+
+.install-steps-card h3 {
+  font-size: 0.96rem;
+  margin-bottom: 14px;
+  color: #5eead4;
+}
+
+.install-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.install-step {
+  background: var(--glass-elevated);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 12px 8px;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.step-num {
+  display: inline-grid;
+  place-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  color: #ffffff;
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+.landing-features-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  text-align: left;
+  margin-bottom: 28px;
+}
+
+.landing-feat-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 16px;
+}
+
+.feat-emoji { font-size: 1.6rem; display: block; margin-bottom: 8px; }
+.landing-feat-card h4 { font-size: 0.95rem; font-weight: 800; margin-bottom: 5px; }
+.landing-feat-card p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; }
+
+.landing-footer {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.preview-web-link {
+  background: none;
+  border: none;
+  color: #5eead4;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ========================================================= */
+/* 2. INSTALLED ANDROID APP SHELL                            */
+/* ========================================================= */
 .app-shell {
   max-width: 720px;
   margin: 0 auto;
-  padding: 12px 12px 0 12px;
+  padding: 12px 12px 98px 12px;
   display: flex;
   flex-direction: column;
   gap: 13px;
@@ -92,15 +307,15 @@ body {
   align-items: center;
   gap: 10px;
   background: var(--glass-elevated);
-  border: 1px solid color-mix(in srgb, var(--accent-1) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-1) 60%, transparent);
   border-radius: 18px;
-  padding: 11px 14px;
-  font-size: 0.8rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  padding: 12px 14px;
+  font-size: 0.82rem;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.32);
 }
 
 .notif-prompt-left { display: flex; align-items: center; gap: 10px; }
-.notif-bell-icon { font-size: 1.4rem; }
+.notif-bell-icon { font-size: 1.45rem; }
 .notif-prompt-left p { color: var(--text-muted); font-size: 0.74rem; margin-top: 2px; line-height: 1.3; }
 .notif-prompt-actions { display: flex; gap: 6px; flex-shrink: 0; }
 
@@ -108,7 +323,7 @@ body {
   background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
   color: #ffffff;
   border: none;
-  padding: 7px 13px;
+  padding: 8px 14px;
   border-radius: 10px;
   font-weight: 800;
   font-size: 0.78rem;
@@ -119,7 +334,7 @@ body {
   background: transparent;
   border: 1px solid var(--glass-border);
   color: var(--text-muted);
-  padding: 7px 10px;
+  padding: 8px 10px;
   border-radius: 10px;
   font-weight: 700;
   font-size: 0.76rem;
@@ -132,8 +347,8 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  background: linear-gradient(135deg, rgba(220, 38, 38, 0.94), rgba(185, 28, 28, 0.96));
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.95), rgba(185, 28, 28, 0.97));
+  border: 1px solid rgba(255, 255, 255, 0.3);
   color: #ffffff;
   padding: 11px 14px;
   border-radius: 18px;
@@ -174,7 +389,8 @@ body {
   margin-bottom: 11px;
 }
 
-.brand-group { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.brand-group { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+.brand-text-wrap { min-width: 0; }
 
 .app-logo {
   width: 42px;
@@ -186,7 +402,7 @@ body {
 }
 
 .brand-title-line { display: flex; align-items: center; gap: 6px; }
-.brand-title-line h2 { font-size: 1.22rem; font-weight: 800; letter-spacing: -0.02em; }
+.brand-title-line h2 { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.02em; }
 
 .rpg-level-pill {
   background: rgba(0, 0, 0, 0.42);
@@ -196,28 +412,20 @@ body {
   font-size: 0.66rem;
   font-weight: 800;
   color: #5eead4;
+  white-space: nowrap;
 }
 
 .live-clock-note {
   display: block;
   font-size: 0.69rem;
-  color: rgba(255, 255, 255, 0.88);
-  margin-top: 1px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .hero-right-cluster { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-
-.web-apk-pill {
-  background: #ffffff;
-  color: #080912;
-  text-decoration: none;
-  font-size: 0.72rem;
-  font-weight: 900;
-  padding: 6px 10px;
-  border-radius: 999px;
-  white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-}
 
 .streak-pill {
   display: flex;
@@ -435,9 +643,9 @@ body {
   background: var(--input-bg);
   border: 1px solid var(--glass-border);
   color: var(--text-main);
-  padding: 10px 12px;
+  padding: 11px 12px;
   border-radius: 12px;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   outline: none;
 }
 
@@ -450,10 +658,10 @@ body {
   background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
   color: #ffffff;
   border: none;
-  padding: 10px 16px;
+  padding: 11px 16px;
   border-radius: 12px;
   font-weight: 800;
-  font-size: 0.86rem;
+  font-size: 0.88rem;
   cursor: pointer;
   white-space: nowrap;
 }
@@ -541,7 +749,6 @@ body {
   border: 1px solid var(--glass-border);
   border-radius: 16px;
   padding: 12px;
-  transition: transform 0.15s ease;
 }
 
 .habit-item-card.priority-card { border-color: rgba(255, 184, 0, 0.52); }
@@ -649,13 +856,11 @@ body {
   cursor: pointer;
   display: grid;
   place-content: center;
-  transition: 0.15s ease;
 }
 
 .day-box:checked {
   background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
   border-color: transparent;
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-1) 45%, transparent);
 }
 
 .day-box:checked::after { content: "✓"; color: #ffffff; font-size: 0.92rem; font-weight: 900; }
@@ -673,9 +878,15 @@ body {
   cursor: pointer;
 }
 
-/* Numbered To-Do List */
+/* ========================================================= */
+/* DEDICATED TO-DO LIST WORKSPACE                            */
+/* ========================================================= */
+.todo-dedicated-card {
+  min-height: 56vh;
+}
+
 .todo-input-form { display: flex; gap: 8px; margin-bottom: 14px; }
-.todo-list-container { display: flex; flex-direction: column; gap: 9px; }
+.todo-list-container { display: flex; flex-direction: column; gap: 10px; }
 
 .todo-row-card {
   display: flex;
@@ -684,25 +895,42 @@ body {
   gap: 10px;
   background: var(--glass-elevated);
   border: 1px solid var(--glass-border);
-  border-radius: 14px;
-  padding: 12px 14px;
+  border-radius: 15px;
+  padding: 13px 14px;
   transition: all 0.3s ease;
+}
+
+.todo-row-card.overdue-todo {
+  border-color: rgba(245, 158, 11, 0.75);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.14), var(--glass-elevated));
 }
 
 .todo-row-card.completing { opacity: 0; transform: translateX(28px); }
 .todo-row-card.completing .todo-text { text-decoration: line-through; color: var(--teal); }
 
-.todo-left { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
-.todo-number { font-weight: 900; font-size: 0.94rem; color: var(--accent-1); flex-shrink: 0; }
-.todo-text { font-size: 0.94rem; font-weight: 600; word-break: break-word; }
+.todo-left { display: flex; align-items: flex-start; gap: 10px; min-width: 0; flex: 1; }
+.todo-number { font-weight: 900; font-size: 0.98rem; color: var(--accent-1); flex-shrink: 0; margin-top: 1px; }
+.todo-text-block { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.todo-text { font-size: 0.96rem; font-weight: 700; word-break: break-word; }
+
+.todo-age-tag {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.todo-age-tag.overdue {
+  color: #fbbf24;
+  font-weight: 800;
+}
 
 .todo-right-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
 .todo-checkbox {
   appearance: none;
   -webkit-appearance: none;
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 9px;
   background: var(--input-bg);
   border: 2px solid var(--accent-1);
@@ -713,9 +941,9 @@ body {
 }
 
 .todo-checkbox:checked { background: var(--teal); border-color: var(--teal); }
-.todo-checkbox:checked::after { content: "✓"; color: #080912; font-weight: 900; font-size: 1rem; }
+.todo-checkbox:checked::after { content: "✓"; color: #080912; font-weight: 900; font-size: 1.05rem; }
 
-.completed-todo-drawer { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--glass-border); }
+.completed-todo-drawer { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--glass-border); }
 .completed-drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .completed-todo-list { display: flex; flex-direction: column; gap: 6px; }
 .completed-todo-item { font-size: 0.8rem; color: var(--text-muted); text-decoration: line-through; padding: 6px 10px; background: var(--input-bg); border-radius: 9px; }
@@ -820,7 +1048,7 @@ html[data-theme="light"] .lvl-0 { background: #e2e8f0; }
 
 .challenges-list, .leaderboard-list, .activities-list { display: flex; flex-direction: column; gap: 8px; }
 .challenge-card { background: var(--glass-elevated); border: 1px solid var(--glass-border); border-radius: 13px; padding: 10px 12px; }
-.challenge-top { display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 700; margin-bottom: 6px; }
+.challenge-top { display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; font-weight: 700; margin-bottom: 6px; }
 
 .badges-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .badge-tile { background: var(--glass-elevated); border: 1px solid var(--glass-border); border-radius: 13px; padding: 9px 6px; text-align: center; opacity: 0.35; filter: grayscale(1); }
@@ -840,7 +1068,7 @@ html[data-theme="light"] .lvl-0 { background: #e2e8f0; }
   transform: translateX(-50%);
   width: calc(100% - 20px);
   max-width: 480px;
-  background: rgba(13, 15, 28, 0.94);
+  background: rgba(13, 15, 28, 0.95);
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
   border: 1px solid rgba(255, 255, 255, 0.16);
@@ -867,7 +1095,6 @@ html[data-theme="light"] .lvl-0 { background: #e2e8f0; }
   border-radius: 999px;
   gap: 2px;
   cursor: pointer;
-  transition: 0.2s ease;
 }
 
 .nav-icon { font-size: 1rem; }
@@ -934,3 +1161,7 @@ html[data-theme="light"] .lvl-0 { background: #e2e8f0; }
 }
 
 .toast-undo-btn { background: var(--accent-1); color: #ffffff; border: none; padding: 4px 10px; border-radius: 999px; font-weight: 800; font-size: 0.74rem; cursor: pointer; }
+
+@media (max-width: 480px) {
+  .install-steps-grid, .landing-features-grid { grid-template-columns: 1fr; }
+}
