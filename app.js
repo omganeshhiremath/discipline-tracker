@@ -1,5 +1,6 @@
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const STATE_KEY = "discipline_super_state_v5";
+const APP_LOCK_KEY = "discipline_is_installed_app";
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 // =========================================================================
@@ -685,7 +686,7 @@ function loadInitialState() {
 let state = loadInitialState();
 let weekOffset = 0;
 let chartMode = "pct";
-let weeklyChart = null;
+let lastMetricsSnapshot = null;
 let lastDeletedTodo = null;
 let forceAppPreview = false;
 let activeTimer = { habitId: null, totalSec: 0, remainingSec: 0, interval: null, running: false };
@@ -695,15 +696,24 @@ function saveState() {
 }
 
 // ==========================================
-// 3. WEBSITE VS INSTALLED APK ROUTING
+// 3. PERMANENT OFFLINE APP-MODE DETECTION
 // ==========================================
 function isInstalledAppMode() {
   if (forceAppPreview) return true;
+  if (localStorage.getItem(APP_LOCK_KEY) === "1") return true;
+
   const params = new URLSearchParams(window.location.search);
-  if (params.get("mode") === "app") return true;
-  if (window.matchMedia("(display-mode: standalone)").matches) return true;
-  if (window.navigator.standalone === true) return true;
-  if (document.referrer && document.referrer.includes("android-app://")) return true;
+  const detectedApp =
+    params.get("mode") === "app" ||
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.matchMedia("(display-mode: minimal-ui)").matches ||
+    window.navigator.standalone === true ||
+    (document.referrer && document.referrer.includes("android-app://"));
+
+  if (detectedApp) {
+    localStorage.setItem(APP_LOCK_KEY, "1");
+    return true;
+  }
   return false;
 }
 
@@ -836,7 +846,6 @@ function checkScheduledAndOverdueNotifications() {
   const todayKey = getDayKey(now);
   const { tasksLeft, todosLeft } = getPendingSummary();
 
-  // A. Check if ANY To-Do item has crossed 1 full day (24 hours) unfinished!
   let stateChanged = false;
   state.todos.forEach((todo) => {
     const createdAt = todo.createdAt || nowMs;
@@ -852,7 +861,6 @@ function checkScheduledAndOverdueNotifications() {
   });
   if (stateChanged) saveState();
 
-  // B. User's chosen daily reminder time
   if ((tasksLeft > 0 || todosLeft > 0) && currentHHMM === state.reminderTime && state.lastNotifDay !== todayKey) {
     state.lastNotifDay = todayKey;
     saveState();
@@ -862,7 +870,6 @@ function checkScheduledAndOverdueNotifications() {
     );
   }
 
-  // C. 9:00 PM Streak-About-to-End Alert
   if ((tasksLeft > 0 || todosLeft > 0) && now.getHours() === 21 && now.getMinutes() === 0 && state.lastDangerNotifDay !== todayKey) {
     state.lastDangerNotifDay = todayKey;
     saveState();
@@ -872,7 +879,6 @@ function checkScheduledAndOverdueNotifications() {
     );
   }
 
-  // D. Per-habit custom reminder time
   const todayIdx = getRolledDate(now).getDay();
   const wkKey = getWeekStartKey(0);
   state.habits.forEach((h) => {
@@ -1412,63 +1418,126 @@ function renderTodos() {
 }
 
 // ==========================================
-// 10. MAXIMIZED GRAPH, WEEK HISTORY & HEATMAP
+// 10. 100% OFFLINE NATIVE CANVAS SPLINE GRAPH
 // ==========================================
-function renderGraphAndInsights(metrics) {
+function drawOfflineSplineChart(metrics) {
   const canvasEl = document.getElementById("modernWeeklyChart");
-  if (!canvasEl || typeof Chart === "undefined") return;
-  const ctx = canvasEl.getContext("2d");
-  if (weeklyChart) weeklyChart.destroy();
+  if (!canvasEl || !canvasEl.parentElement) return;
 
-  const accentHex = getComputedStyle(document.documentElement).getPropertyValue("--accent-1").trim() || "#ff2e88";
-  const gradient = ctx.createLinearGradient(0, 0, 0, 280);
-  gradient.addColorStop(0, accentHex + "88");
-  gradient.addColorStop(1, "rgba(0, 212, 182, 0.0)");
+  const rect = canvasEl.parentElement.getBoundingClientRect();
+  const width = Math.max(280, rect.width - 12);
+  const height = Math.max(220, rect.height - 18);
+  const dpr = window.devicePixelRatio || 1;
+
+  canvasEl.width = width * dpr;
+  canvasEl.height = height * dpr;
+  canvasEl.style.width = `${width}px`;
+  canvasEl.style.height = `${height}px`;
+
+  const ctx = canvasEl.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, width, height);
 
   const isPct = chartMode === "pct";
-  const dataPoints = isPct ? metrics.dailyPercentages : metrics.dailyRawDone;
+  const values = isPct ? metrics.dailyPercentages : metrics.dailyRawDone;
+  const maxVal = isPct ? 100 : Math.max(...values, metrics.activeHabits.length, 4);
 
-  weeklyChart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: DAYS,
-      datasets: [
-        {
-          data: dataPoints,
-          borderColor: accentHex,
-          borderWidth: 3,
-          backgroundColor: gradient,
-          fill: true,
-          tension: 0.4,
-          pointBackgroundColor: "#ffffff",
-          pointBorderColor: accentHex,
-          pointBorderWidth: 2.5,
-          pointRadius: 5
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: {
-          beginAtZero: true,
-          suggestedMax: isPct ? 100 : Math.max(metrics.activeHabits.length, 1),
-          ticks: {
-            color: "#9aa2c0",
-            stepSize: isPct ? 25 : 1,
-            callback: (v) => (isPct ? v + "%" : v)
-          },
-          grid: { color: "rgba(255,255,255,0.07)" }
-        },
-        x: {
-          ticks: { color: "#9aa2c0", font: { weight: "700" } },
-          grid: { display: false }
-        }
-      }
+  const accentHex = getComputedStyle(document.documentElement).getPropertyValue("--accent-1").trim() || "#ff2e88";
+  const isLight = document.documentElement.getAttribute("data-theme") === "light";
+  const gridColor = isLight ? "rgba(15, 23, 42, 0.1)" : "rgba(255, 255, 255, 0.08)";
+  const labelColor = isLight ? "#52607a" : "#9aa2c0";
+
+  const padLeft = 42;
+  const padRight = 18;
+  const padTop = 26;
+  const padBottom = 28;
+  const plotW = width - padLeft - padRight;
+  const plotH = height - padTop - padBottom;
+
+  // Horizontal grid lines & Y-axis labels
+  ctx.font = "700 11px -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "right";
+  ctx.textBaseline = "middle";
+
+  for (let step = 0; step <= 4; step++) {
+    const ratio = step / 4;
+    const y = padTop + plotH - ratio * plotH;
+    const tickVal = Math.round(maxVal * ratio);
+
+    ctx.strokeStyle = gridColor;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padLeft, y);
+    ctx.lineTo(padLeft + plotW, y);
+    ctx.stroke();
+
+    ctx.fillStyle = labelColor;
+    ctx.fillText(isPct ? `${tickVal}%` : `${tickVal}`, padLeft - 8, y);
+  }
+
+  // Compute points
+  const points = values.map((val, idx) => ({
+    x: padLeft + (plotW / 6) * idx,
+    y: padTop + plotH - (Math.min(val, maxVal) / maxVal) * plotH,
+    val
+  }));
+
+  // Draw smooth spline path
+  function traceSmoothCurve() {
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 0; i < points.length - 1; i++) {
+      const p0 = points[i];
+      const p1 = points[i + 1];
+      const midX = (p0.x + p1.x) / 2;
+      ctx.bezierCurveTo(midX, p0.y, midX, p1.y, p1.x, p1.y);
     }
+  }
+
+  // Gradient fill under curve
+  const grad = ctx.createLinearGradient(0, padTop, 0, padTop + plotH);
+  grad.addColorStop(0, accentHex + "88");
+  grad.addColorStop(1, "rgba(0, 212, 182, 0.0)");
+
+  ctx.beginPath();
+  traceSmoothCurve();
+  ctx.lineTo(points[points.length - 1].x, padTop + plotH);
+  ctx.lineTo(points[0].x, padTop + plotH);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Stroke glowing spline line
+  ctx.beginPath();
+  traceSmoothCurve();
+  ctx.strokeStyle = accentHex;
+  ctx.lineWidth = 3.5;
+  ctx.lineCap = "round";
+  ctx.stroke();
+
+  // Draw X-axis day names, glowing nodes & value labels
+  ctx.textAlign = "center";
+  points.forEach((pt, idx) => {
+    ctx.fillStyle = labelColor;
+    ctx.font = "700 11px -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText(DAYS[idx], pt.x, padTop + plotH + 16);
+
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 5.5, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+    ctx.lineWidth = 2.8;
+    ctx.strokeStyle = accentHex;
+    ctx.stroke();
+
+    ctx.fillStyle = isLight ? "#0f172a" : "#ffffff";
+    ctx.font = "800 10px -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText(isPct ? `${pt.val}%` : `${pt.val}`, pt.x, pt.y - 12);
   });
+}
+
+function renderGraphAndInsights(metrics) {
+  lastMetricsSnapshot = metrics;
+  drawOfflineSplineChart(metrics);
 
   const wkKey = getWeekStartKey(weekOffset);
   const prevMetrics = computeWeekMetrics(getWeekStartKey(weekOffset - 1));
@@ -1511,6 +1580,10 @@ function renderGraphAndInsights(metrics) {
     </div>
   `;
 }
+
+window.addEventListener("resize", () => {
+  if (lastMetricsSnapshot) drawOfflineSplineChart(lastMetricsSnapshot);
+});
 
 function renderHeatmap() {
   const grid = document.getElementById("activityHeatmapGrid");
@@ -1896,6 +1969,7 @@ document.querySelectorAll(".theme-choice").forEach((btn) => {
     state.theme = btn.dataset.themeVal;
     saveState();
     applyEnvironmentAndTheme();
+    if (lastMetricsSnapshot) drawOfflineSplineChart(lastMetricsSnapshot);
   });
 });
 
@@ -2138,7 +2212,7 @@ function escapeHTML(str) {
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(() => {});
+    navigator.serviceWorker.register("./sw.js").then((reg) => reg.update()).catch(() => {});
   });
 }
 

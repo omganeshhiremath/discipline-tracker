@@ -1,7 +1,8 @@
-const CACHE_NAME = "discipline-app-v6";
+const CACHE_NAME = "discipline-app-v7";
 const ASSETS = [
   "./",
   "./index.html",
+  "./index.html?mode=app",
   "./style.css",
   "./app.js",
   "./manifest.json",
@@ -36,14 +37,32 @@ self.addEventListener("notificationclick", (event) => {
   );
 });
 
+// Cache-First with Background Update: opens in 0ms in Airplane Mode
 self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") return;
+
   event.respondWith(
-    fetch(event.request)
-      .then((res) => {
-        const clone = res.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-        return res;
-      })
-      .catch(() => caches.match(event.request))
+    caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
+      const networkFetch = fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const clone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return networkResponse;
+        })
+        .catch(() => null);
+
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+
+      return networkFetch.then((res) => {
+        if (res) return res;
+        if (event.request.mode === "navigate") {
+          return caches.match("./index.html");
+        }
+      });
+    })
   );
 });
