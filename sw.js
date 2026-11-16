@@ -1,9 +1,10 @@
-const CACHE_NAME = "discipline-app-v7";
+const CACHE_NAME = "discipline-app-v9";
 const ASSETS = [
   "./",
   "./index.html",
   "./index.html?mode=app",
   "./style.css",
+  "./quotes.js",
   "./app.js",
   "./manifest.json",
   "./icon-512.png"
@@ -37,7 +38,7 @@ self.addEventListener("notificationclick", (event) => {
   );
 });
 
-// Cache-First with Background Update: opens in 0ms in Airplane Mode
+// Cache-First with Background Update: 0ms instant open in Airplane Mode
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 

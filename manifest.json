@@ -1,9 +1,9 @@
 {
   "name": "Discipline — Habit, To-Do & Rank Tracker",
   "short_name": "Discipline",
-  "description": "7-day habit tracker, dedicated To-Do workspace, focus timers, analytics graphs, and rank levels.",
-  "start_url": "https://omganeshhiremath.github.io/discipline-tracker/index.html?mode=app",
-  "scope": "https://omganeshhiremath.github.io/discipline-tracker/",
+  "description": "7-day habit tracker, numbered To-Do list, focus timers, offline analytics graphs, and rank divisions.",
+  "start_url": "./index.html?mode=app",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#080912",
   "theme_color": "#080912",
