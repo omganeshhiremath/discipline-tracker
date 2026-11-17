@@ -1,30 +1,300 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="oled" data-accent="mono">
+<html lang="en" data-theme="aurora" data-accent="pink">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" id="metaThemeColor" content="#0a0a0a" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#080912" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Discipline — Habit, To-Do & Rank Tracker</title>
+  <title>Discipline Tracker App — Build Unbreakable Habits</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/png" href="icon-512.png" />
   <link rel="apple-touch-icon" href="icon-512.png" />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .hidden { display: none !important; }
+    .web-landing {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 16px 48px;
+      text-align: center;
+    }
+    .landing-container {
+      max-width: 640px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .landing-badge {
+      display: inline-block;
+      background: rgba(255, 46, 136, 0.16);
+      border: 1px solid rgba(255, 46, 136, 0.45);
+      color: #ff85b8;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 18px;
+    }
+    .landing-icon-wrap {
+      position: relative;
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 18px;
+    }
+    .landing-app-icon {
+      width: 96px;
+      height: 96px;
+      border-radius: 24px;
+      border: 2px solid rgba(255, 255, 255, 0.22);
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+    }
+    .landing-icon-glow {
+      position: absolute;
+      inset: -10px;
+      background: radial-gradient(circle, rgba(255, 46, 136, 0.55), transparent 70%);
+      filter: blur(14px);
+      z-index: 1;
+    }
+    .landing-title {
+      font-size: 2.15rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #ffffff 20%, #ffd1e6 65%, #00d4b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .landing-subtitle {
+      color: #b4bad4;
+      font-size: 0.98rem;
+      line-height: 1.55;
+      max-width: 520px;
+      margin: 0 auto 24px;
+    }
+    .mega-apk-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto 26px;
+      padding: 18px 24px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #ff2e88 0%, #ff6a45 100%);
+      color: #ffffff;
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      box-shadow: 0 16px 38px rgba(255, 46, 136, 0.42);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .mega-apk-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 44px rgba(255, 46, 136, 0.55);
+    }
+    .mega-btn-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.22);
+      display: grid;
+      place-content: center;
+      font-size: 1.4rem;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+    .mega-btn-text {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+    .mega-btn-text strong {
+      font-size: 1.18rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+    .mega-btn-text small {
+      font-size: 0.76rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-top: 2px;
+    }
+    .install-steps-card {
+      background: rgba(20, 22, 38, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+    .install-steps-card h3 {
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+    .install-steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 560px) {
+      .install-steps-grid { grid-template-columns: 1fr; }
+    }
+    .install-step {
+      background: rgba(10, 11, 22, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 0.82rem;
+      color: #cfd4ea;
+    }
+    .step-num {
+      display: inline-grid;
+      place-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #ff2e88;
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.76rem;
+      margin-bottom: 6px;
+    }
+    .landing-features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      text-align: left;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 560px) {
+      .landing-features-grid { grid-template-columns: 1fr; }
+    }
+    .landing-feat-card {
+      background: rgba(20, 22, 38, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      padding: 16px;
+    }
+    .feat-emoji { font-size: 1.4rem; display: block; margin-bottom: 6px; }
+    .landing-feat-card h4 { font-size: 0.94rem; margin-bottom: 4px; color: #fff; }
+    .landing-feat-card p { font-size: 0.8rem; color: #9ca3bf; line-height: 1.45; }
+    .landing-footer {
+      color: #8f96b2;
+      font-size: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .preview-web-link {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
   <div class="aurora-bg" aria-hidden="true"></div>
   <canvas id="confettiCanvas" aria-hidden="true"></canvas>
 
-  <!-- PURE APP INTERFACE (OPENS DIRECTLY — NO WEBSITE INSIDE) -->
-  <div class="app-shell" id="mainAppShell">
+  <!-- ========================================================= -->
+  <!-- 1. WEBSITE LANDING PAGE (SHOWN IN WEB BROWSERS)           -->
+  <!-- ========================================================= -->
+  <div class="web-landing" id="webLandingView">
+    <div class="landing-container">
+      <div class="landing-badge">🔥 OFFICIAL ANDROID APP • OFFLINE READY</div>
+
+      <div class="landing-icon-wrap">
+        <img src="icon-512.png" alt="Discipline App Icon" class="landing-app-icon" />
+        <div class="landing-icon-glow"></div>
+      </div>
+
+      <h1 class="landing-title">
+        Discipline Tracker App
+      </h1>
+      <p class="landing-subtitle">
+        Install it and make your life truly disciplined. Track daily habits, crush your To-Do list, protect your 12:01 AM streak, and climb from <strong>Noob</strong> to <strong>Untouchable</strong> — 100% offline.
+      </p>
+
+      <!-- HUGE PROMINENT DOWNLOAD APK BUTTON -->
+      <a href="./discipline-app.apk" download="discipline-app.apk" class="mega-apk-btn">
+        <span class="mega-btn-icon">⬇</span>
+        <span class="mega-btn-text">
+          <strong>Download Android APK</strong>
+          <small>Free • Works 100% Offline • Fullscreen Native App</small>
+        </span>
+      </a>
+
+      <div class="install-steps-card">
+        <h3>⚡ Quick 3-Step Install</h3>
+        <div class="install-steps-grid">
+          <div class="install-step">
+            <span class="step-num">1</span>
+            <p>Tap <strong>Download Android APK</strong> above</p>
+          </div>
+          <div class="install-step">
+            <span class="step-num">2</span>
+            <p>Open the file & tap <strong>Install</strong></p>
+          </div>
+          <div class="install-step">
+            <span class="step-num">3</span>
+            <p>Open once with internet, then use anywhere offline</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="landing-features-grid">
+        <div class="landing-feat-card">
+          <span class="feat-emoji">🔥</span>
+          <h4>12:01 AM Streak & 500+ Quotes</h4>
+          <p>Snapchat-style daily streak with monthly freeze shields and a fresh locked quote every night.</p>
+        </div>
+        <div class="landing-feat-card">
+          <span class="feat-emoji">📝</span>
+          <h4>Smart To-Do & 1-Day Alerts</h4>
+          <p>Numbered work list that automatically notifies you if a task crosses 1 day unfinished.</p>
+        </div>
+        <div class="landing-feat-card">
+          <span class="feat-emoji">🏆</span>
+          <h4>9 Rank Tiers & XP Levels</h4>
+          <p>Weighted 2x priority tasks, focus timers, 12-week heatmap, and shareable PNG report cards.</p>
+        </div>
+        <div class="landing-feat-card">
+          <span class="feat-emoji">✈️</span>
+          <h4>100% Offline Capable</h4>
+          <p>Zero internet needed after setup—habits, graphs, timers, and To-Dos run natively offline.</p>
+        </div>
+      </div>
+
+      <footer class="landing-footer">
+        <p>Discipline Tracker • Built for Daily Consistency</p>
+        <button type="button" class="preview-web-link" id="previewAppInBrowserBtn">
+          Preview App Interface in Browser →
+        </button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- 2. INSTALLED APP INTERFACE (NO DOWNLOAD BUTTON INSIDE)    -->
+  <!-- ========================================================= -->
+  <div class="app-shell hidden" id="mainAppShell">
     <!-- Smart Notification Permission Prompt -->
     <div class="notif-prompt-card hidden" id="notifPromptCard">
       <div class="notif-prompt-left">
         <span class="notif-bell-icon">🔔</span>
         <div>
-          <strong>Enable Streak & To-Do Alerts</strong>
-          <p>Get notified before your streak ends & when To-Dos cross 1 day.</p>
+          <strong>Allow Notifications</strong>
+          <p>Get Streak-Ending alerts & 1-day overdue To-Do reminders.</p>
         </div>
       </div>
       <div class="notif-prompt-actions">
@@ -33,7 +303,7 @@
       </div>
     </div>
 
-    <!-- Streak-in-Danger Alert Banner -->
+    <!-- 9:00 PM Streak-in-Danger Alert Banner -->
     <div class="danger-banner hidden" id="streakDangerBanner">
       <div class="danger-left">
         <span class="danger-pulse">⚠️</span>
@@ -71,7 +341,7 @@
             <span class="freeze-chip" id="freezeCountChip" title="Monthly Streak Freezes">❄️1</span>
           </div>
 
-          <button type="button" class="studio-btn" id="openSettingsBtn" title="Settings & Notifications" aria-label="Settings and Notifications">
+          <button type="button" class="studio-btn" id="openSettingsBtn" title="Settings & Reminders">
             ⚙️
           </button>
         </div>
@@ -88,41 +358,28 @@
         </div>
       </div>
 
-      <!-- Today's Quick-Focus Widget with Radial Ring -->
+      <!-- Today's Quick-Focus Widget -->
       <div class="today-widget">
-        <div class="today-mission-left">
-          <div class="mini-ring-wrap">
-            <svg class="mini-ring-svg" viewBox="0 0 44 44" aria-hidden="true">
-              <circle class="mini-ring-track" cx="22" cy="22" r="18"></circle>
-              <circle class="mini-ring-progress" id="todayRingCircle" cx="22" cy="22" r="18" stroke-dasharray="113.1" stroke-dashoffset="113.1"></circle>
-            </svg>
-          </div>
-          <div>
-            <span class="today-eyebrow" id="todayDateLabel">TODAY'S MISSION</span>
-            <div class="today-stat-line">
-              <strong id="todayDoneFraction">0 / 0</strong> habits • <strong id="todayTodoPendingInline">0</strong> To-Dos left
-            </div>
+        <div>
+          <span class="today-eyebrow" id="todayDateLabel">TODAY'S MISSION</span>
+          <div class="today-stat-line">
+            <strong id="todayDoneFraction">0 / 0</strong> habits • <strong id="todayTodoPendingInline">0</strong> To-Dos left
           </div>
         </div>
         <div class="today-ring-badge" id="todayPctPill">0%</div>
       </div>
 
-      <!-- Daily Motivational Quote (Auto-updates at 12:01 AM + Manual Cycle) -->
+      <!-- Locked Daily Motivational Quote -->
       <div class="quote-box">
         <div class="quote-header">
-          <span class="quote-tag" id="quoteCounterLabel">QUOTE #1 / 520 • UPDATES 12:01 AM</span>
-          <div style="display:flex; gap:6px;">
-            <button type="button" id="nextQuoteBtn" class="icon-btn" title="Next quote" aria-label="Next quote">↻</button>
-            <button type="button" id="copyQuoteBtn" class="icon-btn" title="Copy quote" aria-label="Copy quote">📋</button>
-          </div>
+          <span class="quote-tag" id="quoteCounterLabel">DAILY QUOTE • UPDATES AT 12:01 AM</span>
+          <button type="button" id="copyQuoteBtn" class="icon-btn" title="Copy quote">📋</button>
         </div>
         <p id="dailyQuoteText" class="quote-text">"Discipline is choosing what you want most over what you want now."</p>
       </div>
     </header>
 
-    <!-- ========================================== -->
-    <!-- TAB 1: DAILY HABIT TASKS (SUN - SAT)       -->
-    <!-- ========================================== -->
+    <!-- TAB 1: DAILY HABIT TASKS (SUN - SAT) -->
     <main class="tab-view active" id="view-tasks">
       <section class="glass-card">
         <div class="section-header">
@@ -141,7 +398,7 @@
             <input
               type="text"
               id="habitNameInput"
-              placeholder="Add daily habit (e.g., Exercise 30m)..."
+              placeholder="Add daily task (e.g., Exercise 30m)..."
               maxlength="45"
               required
             />
@@ -226,15 +483,13 @@
       </section>
     </main>
 
-    <!-- ========================================== -->
     <!-- TAB 2: SEPARATE DEDICATED TO-DO LIST SPACE -->
-    <!-- ========================================== -->
     <main class="tab-view" id="view-todo">
       <section class="glass-card todo-dedicated-card">
         <div class="section-header">
           <div>
             <h3>📝 Dedicated To-Do Workspace</h3>
-            <p class="muted">Tick when done • Alerts automatically if &gt; 1 day</p>
+            <p class="muted">Tick the box when done • Alerts if pending &gt; 1 day</p>
           </div>
           <span class="pill-badge pill-glow" id="todoCountBadge">0 Pending</span>
         </div>
@@ -243,7 +498,7 @@
           <input
             type="text"
             id="todoInput"
-            placeholder="Write work here (e.g., Finish Physics assignment)..."
+            placeholder="Write work here (e.g., Computer Class work)..."
             maxlength="90"
             required
           />
@@ -262,9 +517,7 @@
       </section>
     </main>
 
-    <!-- ========================================== -->
-    <!-- TAB 3: MAXIMIZED GRAPH, HISTORY & HEATMAP  -->
-    <!-- ========================================== -->
+    <!-- TAB 3: MAXIMIZED GRAPH, HISTORY & HEATMAP -->
     <main class="tab-view" id="view-graph">
       <section class="glass-card graph-section">
         <div class="week-navigator">
@@ -279,7 +532,7 @@
         <div class="section-header" style="margin-top: 12px;">
           <div>
             <h3>Weekly Performance</h3>
-            <p class="muted" id="graphSubtitle">Daily weighted completion % (Tap any point)</p>
+            <p class="muted" id="graphSubtitle">Daily weighted completion %</p>
           </div>
           <div class="segmented-toggle">
             <button type="button" class="seg-btn active" id="modePctBtn">%</button>
@@ -289,7 +542,6 @@
 
         <div class="maximized-chart-wrapper">
           <canvas id="modernWeeklyChart"></canvas>
-          <div class="chart-point-tooltip hidden" id="chartPointTooltip"></div>
         </div>
 
         <div class="insights-grid" id="dayInsightsGrid"></div>
@@ -317,9 +569,7 @@
       </section>
     </main>
 
-    <!-- ========================================== -->
-    <!-- TAB 4: RANK, BADGES, CHALLENGES & REPORT   -->
-    <!-- ========================================== -->
+    <!-- TAB 4: RANK, BADGES, CHALLENGES & REPORT -->
     <main class="tab-view" id="view-rank">
       <section class="glass-card">
         <div class="section-header">
@@ -342,7 +592,7 @@
         <div class="rank-progress-block">
           <div class="rank-progress-labels">
             <span id="currentRankLabel">Noob (0%)</span>
-            <span id="nextRankLabel">Next: Bronze (15%)</span>
+            <span id="nextRankLabel">Next: Silver (20%)</span>
           </div>
           <div class="progress-track">
             <div class="progress-fill" id="rankProgressFill" style="width: 0%"></div>
@@ -473,19 +723,19 @@
       </div>
 
       <div class="settings-block">
-        <span class="settings-label">App Theme, Contrast & Sound</span>
+        <span class="settings-label">App Theme, Accent Glow & Sound</span>
         <div class="theme-btn-row">
-          <button type="button" class="theme-choice" data-theme-val="oled">🖤 Pure Black</button>
-          <button type="button" class="theme-choice" data-theme-val="aurora">🌑 Dark Grey</button>
-          <button type="button" class="theme-choice" data-theme-val="light">🤍 Crisp White</button>
+          <button type="button" class="theme-choice" data-theme-val="aurora">🌌 Aurora</button>
+          <button type="button" class="theme-choice" data-theme-val="oled">🖤 Pure OLED</button>
+          <button type="button" class="theme-choice" data-theme-val="light">☀️ Daylight</button>
         </div>
         <div class="accent-row-between" style="margin-top:10px;">
           <div class="accent-swatches">
-            <button type="button" class="swatch-btn" data-accent-val="mono" style="background:#ffffff;" aria-label="White"></button>
-            <button type="button" class="swatch-btn" data-accent-val="silver" style="background:#a3a3a3;" aria-label="Silver"></button>
-            <button type="button" class="swatch-btn" data-accent-val="slate" style="background:#737373;" aria-label="Slate"></button>
-            <button type="button" class="swatch-btn" data-accent-val="charcoal" style="background:#404040;" aria-label="Charcoal"></button>
-            <button type="button" class="swatch-btn" data-accent-val="obsidian" style="background:#171717;" aria-label="Obsidian"></button>
+            <button type="button" class="swatch-btn" data-accent-val="pink" style="background:#ff2e88;"></button>
+            <button type="button" class="swatch-btn" data-accent-val="cyan" style="background:#00d4b6;"></button>
+            <button type="button" class="swatch-btn" data-accent-val="gold" style="background:#ffb800;"></button>
+            <button type="button" class="swatch-btn" data-accent-val="violet" style="background:#8b5cf6;"></button>
+            <button type="button" class="swatch-btn" data-accent-val="emerald" style="background:#10b981;"></button>
           </div>
           <button type="button" class="btn-ghost-sm" id="toggleSoundBtn">🔊 Sound: ON</button>
         </div>
@@ -493,11 +743,7 @@
 
       <div class="settings-block">
         <span class="settings-label">🔥 Streak & Shield Vault</span>
-        <p class="muted">
-          Longest Streak Ever: <strong id="longestStreakStat">1</strong> days •
-          Monthly Freezes Left: <strong id="freezeVaultStat">1</strong> •
-          Quotes Loaded: <strong id="totalQuotesStat">520</strong>
-        </p>
+        <p class="muted">Longest Streak Ever: <strong id="longestStreakStat">1</strong> days • Monthly Freezes Left: <strong id="freezeVaultStat">1</strong></p>
       </div>
 
       <div class="settings-block">
@@ -528,7 +774,31 @@
     <button type="button" class="toast-undo-btn hidden" id="toastUndoBtn">Undo</button>
   </div>
 
-  <script src="quotes.js"></script>
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const isAppMode =
+        params.get("mode") === "app" ||
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true;
+
+      const landingEl = document.getElementById("webLandingView");
+      const appEl = document.getElementById("mainAppShell");
+      const previewBtn = document.getElementById("previewAppInBrowserBtn");
+
+      if (isAppMode) {
+        if (landingEl) landingEl.classList.add("hidden");
+        if (appEl) appEl.classList.remove("hidden");
+      }
+
+      if (previewBtn) {
+        previewBtn.addEventListener("click", function () {
+          if (landingEl) landingEl.classList.add("hidden");
+          if (appEl) appEl.classList.remove("hidden");
+        });
+      }
+    })();
+  </script>
   <script src="app.js"></script>
 </body>
 </html>
