@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="aurora" data-accent="pink">
+<html lang="en" data-theme="oled" data-accent="mono">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" id="metaThemeColor" content="#080912" />
+  <meta name="theme-color" id="metaThemeColor" content="#0a0a0a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Discipline — Habit, To-Do & Rank Tracker</title>
@@ -16,92 +16,15 @@
   <div class="aurora-bg" aria-hidden="true"></div>
   <canvas id="confettiCanvas" aria-hidden="true"></canvas>
 
-  <!-- ========================================================= -->
-  <!-- 1. WEBSITE LANDING PAGE (SHOWN ONLY IN WEB BROWSERS)      -->
-  <!-- ========================================================= -->
-  <div class="web-landing" id="webLandingView">
-    <div class="landing-container">
-      <div class="landing-badge">🔥 OFFICIAL ANDROID APP • V8.0 OFFLINE READY</div>
-
-      <div class="landing-icon-wrap">
-        <img src="icon-512.png" alt="Discipline App Icon" class="landing-app-icon" />
-        <div class="landing-icon-glow"></div>
-      </div>
-
-      <h1 class="landing-title">Discipline Tracker App</h1>
-      <p class="landing-subtitle">
-        Install it and make your life truly disciplined. Track daily habits, crush your To-Do list, protect your 12:01 AM streak, and climb from <strong>Noob</strong> to <strong>Untouchable</strong> — 100% offline.
-      </p>
-
-      <a href="./discipline-app.apk" download="discipline-app.apk" class="mega-apk-btn">
-        <span class="mega-btn-icon">⬇</span>
-        <span class="mega-btn-text">
-          <strong>Download Android APK</strong>
-          <small>Free • Works 100% Offline • Fullscreen Native App</small>
-        </span>
-      </a>
-
-      <div class="install-steps-card">
-        <h3>⚡ Quick 3-Step Install</h3>
-        <div class="install-steps-grid">
-          <div class="install-step">
-            <span class="step-num">1</span>
-            <p>Tap <strong>Download Android APK</strong> above</p>
-          </div>
-          <div class="install-step">
-            <span class="step-num">2</span>
-            <p>Open the file & tap <strong>Install</strong></p>
-          </div>
-          <div class="install-step">
-            <span class="step-num">3</span>
-            <p>Open once with internet, then use anywhere offline</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="landing-features-grid">
-        <div class="landing-feat-card">
-          <span class="feat-emoji">🔥</span>
-          <h4>12:01 AM Streak & 520 Quotes</h4>
-          <p>Snapchat-style daily streak with monthly freeze shields and a fresh locked quote every night.</p>
-        </div>
-        <div class="landing-feat-card">
-          <span class="feat-emoji">📝</span>
-          <h4>Smart To-Do & 1-Day Alerts</h4>
-          <p>Numbered work list that automatically notifies you if a task crosses 1 day unfinished.</p>
-        </div>
-        <div class="landing-feat-card">
-          <span class="feat-emoji">🏆</span>
-          <h4>9 Rank Tiers & XP Levels</h4>
-          <p>Weighted 2x priority tasks, focus timers, 12-week heatmap, and shareable PNG report cards.</p>
-        </div>
-        <div class="landing-feat-card">
-          <span class="feat-emoji">✈️</span>
-          <h4>100% Offline Capable</h4>
-          <p>Zero internet needed after setup—habits, graphs, timers, and To-Dos run natively offline.</p>
-        </div>
-      </div>
-
-      <footer class="landing-footer">
-        <p>Discipline Tracker • Built for Daily Consistency</p>
-        <button type="button" class="preview-web-link" id="previewAppInBrowserBtn">
-          Preview App Interface in Browser →
-        </button>
-      </footer>
-    </div>
-  </div>
-
-  <!-- ========================================================= -->
-  <!-- 2. INSTALLED APP INTERFACE (NO DOWNLOAD BUTTON INSIDE)    -->
-  <!-- ========================================================= -->
-  <div class="app-shell hidden" id="mainAppShell">
+  <!-- PURE APP INTERFACE (OPENS DIRECTLY — NO WEBSITE INSIDE) -->
+  <div class="app-shell" id="mainAppShell">
     <!-- Smart Notification Permission Prompt -->
     <div class="notif-prompt-card hidden" id="notifPromptCard">
       <div class="notif-prompt-left">
         <span class="notif-bell-icon">🔔</span>
         <div>
-          <strong>Allow Notifications</strong>
-          <p>Get Streak-Ending alerts & 1-day overdue To-Do reminders.</p>
+          <strong>Enable Streak & To-Do Alerts</strong>
+          <p>Get notified before your streak ends & when To-Dos cross 1 day.</p>
         </div>
       </div>
       <div class="notif-prompt-actions">
@@ -110,7 +33,7 @@
       </div>
     </div>
 
-    <!-- 9:00 PM Streak-in-Danger Alert Banner -->
+    <!-- Streak-in-Danger Alert Banner -->
     <div class="danger-banner hidden" id="streakDangerBanner">
       <div class="danger-left">
         <span class="danger-pulse">⚠️</span>
@@ -148,7 +71,7 @@
             <span class="freeze-chip" id="freezeCountChip" title="Monthly Streak Freezes">❄️1</span>
           </div>
 
-          <button type="button" class="studio-btn" id="openSettingsBtn" title="Settings & Reminders" aria-label="Settings and Reminders">
+          <button type="button" class="studio-btn" id="openSettingsBtn" title="Settings & Notifications" aria-label="Settings and Notifications">
             ⚙️
           </button>
         </div>
@@ -184,11 +107,14 @@
         <div class="today-ring-badge" id="todayPctPill">0%</div>
       </div>
 
-      <!-- Locked Daily Motivational Quote (Changes strictly at 12:01 AM with Streak +1) -->
+      <!-- Daily Motivational Quote (Auto-updates at 12:01 AM + Manual Cycle) -->
       <div class="quote-box">
         <div class="quote-header">
-          <span class="quote-tag" id="quoteCounterLabel">🔒 DAILY QUOTE • UPDATES AT 12:01 AM</span>
-          <button type="button" id="copyQuoteBtn" class="icon-btn" title="Copy quote" aria-label="Copy quote">📋</button>
+          <span class="quote-tag" id="quoteCounterLabel">QUOTE #1 / 520 • UPDATES 12:01 AM</span>
+          <div style="display:flex; gap:6px;">
+            <button type="button" id="nextQuoteBtn" class="icon-btn" title="Next quote" aria-label="Next quote">↻</button>
+            <button type="button" id="copyQuoteBtn" class="icon-btn" title="Copy quote" aria-label="Copy quote">📋</button>
+          </div>
         </div>
         <p id="dailyQuoteText" class="quote-text">"Discipline is choosing what you want most over what you want now."</p>
       </div>
@@ -215,7 +141,7 @@
             <input
               type="text"
               id="habitNameInput"
-              placeholder="Add daily task (e.g., Exercise 30m)..."
+              placeholder="Add daily habit (e.g., Exercise 30m)..."
               maxlength="45"
               required
             />
@@ -308,7 +234,7 @@
         <div class="section-header">
           <div>
             <h3>📝 Dedicated To-Do Workspace</h3>
-            <p class="muted">Tick the box when done • Alerts if pending &gt; 1 day</p>
+            <p class="muted">Tick when done • Alerts automatically if &gt; 1 day</p>
           </div>
           <span class="pill-badge pill-glow" id="todoCountBadge">0 Pending</span>
         </div>
@@ -317,7 +243,7 @@
           <input
             type="text"
             id="todoInput"
-            placeholder="Write work here (e.g., Computer Class work)..."
+            placeholder="Write work here (e.g., Finish Physics assignment)..."
             maxlength="90"
             required
           />
@@ -330,3 +256,279 @@
           <div class="completed-drawer-header">
             <span class="muted">Completed Log: <strong id="todoCompletedCount">0</strong></span>
             <button type="button" class="btn-ghost-sm" id="clearCompletedTodosBtn">Clear Log</button>
+          </div>
+          <div id="completedTodoList" class="completed-todo-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: MAXIMIZED GRAPH, HISTORY & HEATMAP  -->
+    <!-- ========================================== -->
+    <main class="tab-view" id="view-graph">
+      <section class="glass-card graph-section">
+        <div class="week-navigator">
+          <button type="button" class="week-nav-btn" id="prevWeekBtn">◀ Prev</button>
+          <div class="week-nav-center">
+            <strong id="viewedWeekTitle">This Week</strong>
+            <span class="week-delta-badge" id="weekVsLastBadge">Current Week</span>
+          </div>
+          <button type="button" class="week-nav-btn" id="nextWeekBtn" disabled>Next ▶</button>
+        </div>
+
+        <div class="section-header" style="margin-top: 12px;">
+          <div>
+            <h3>Weekly Performance</h3>
+            <p class="muted" id="graphSubtitle">Daily weighted completion % (Tap any point)</p>
+          </div>
+          <div class="segmented-toggle">
+            <button type="button" class="seg-btn active" id="modePctBtn">%</button>
+            <button type="button" class="seg-btn" id="modeCountBtn">Tasks</button>
+          </div>
+        </div>
+
+        <div class="maximized-chart-wrapper">
+          <canvas id="modernWeeklyChart"></canvas>
+          <div class="chart-point-tooltip hidden" id="chartPointTooltip"></div>
+        </div>
+
+        <div class="insights-grid" id="dayInsightsGrid"></div>
+      </section>
+
+      <section class="glass-card">
+        <div class="section-header">
+          <div>
+            <h3>12-Week Consistency Heatmap</h3>
+            <p class="muted">Brighter = higher daily score</p>
+          </div>
+          <div class="heatmap-legend">
+            <span>Less</span>
+            <i class="hm-box lvl-0"></i>
+            <i class="hm-box lvl-1"></i>
+            <i class="hm-box lvl-2"></i>
+            <i class="hm-box lvl-3"></i>
+            <i class="hm-box lvl-4"></i>
+            <span>More</span>
+          </div>
+        </div>
+        <div class="heatmap-scroll">
+          <div id="activityHeatmapGrid" class="heatmap-grid"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: RANK, BADGES, CHALLENGES & REPORT   -->
+    <!-- ========================================== -->
+    <main class="tab-view" id="view-rank">
+      <section class="glass-card">
+        <div class="section-header">
+          <div>
+            <h3>Rank & Weekly Analysis</h3>
+            <p class="muted">Weighted score including 2x priority tasks</p>
+          </div>
+          <span class="pill-badge pill-glow" id="weeklyPctBadge">0%</span>
+        </div>
+
+        <div class="rank-showcase">
+          <div class="rank-icon-circle" id="rankEmoji">🛡️</div>
+          <div class="rank-details">
+            <span class="rank-eyebrow">CURRENT LEVEL</span>
+            <h3 class="rank-title" id="rankTitle">Noob Level</h3>
+            <p class="motivation-verdict" id="motivationVerdict">You are weak, Comeback!</p>
+          </div>
+        </div>
+
+        <div class="rank-progress-block">
+          <div class="rank-progress-labels">
+            <span id="currentRankLabel">Noob (0%)</span>
+            <span id="nextRankLabel">Next: Bronze (15%)</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="rankProgressFill" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <button type="button" class="btn-share-report" id="generateReportCardBtn">
+          📸 Generate & Share Weekly Report Card
+        </button>
+
+        <div class="sub-block">
+          <h4 class="sub-heading">⚔️ Weekly Challenges</h4>
+          <div id="weeklyChallengesList" class="challenges-list"></div>
+        </div>
+
+        <div class="sub-block">
+          <h4 class="sub-heading">🏅 Trophy Shelf (<span id="unlockedBadgesCount">0</span>/8)</h4>
+          <div id="badgesGrid" class="badges-grid"></div>
+        </div>
+
+        <div class="sub-block">
+          <div class="sub-header-row">
+            <h4 class="sub-heading">🌍 Discipline Leaderboard</h4>
+            <button type="button" class="btn-ghost-sm" id="addFriendScoreBtn">+ Friend Code</button>
+          </div>
+          <div id="leaderboardList" class="leaderboard-list"></div>
+        </div>
+
+        <div class="sub-block">
+          <h4 class="sub-heading">📊 Habit Breakdown</h4>
+          <div id="activitiesList" class="activities-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 4-Tab Native Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+      <button type="button" class="nav-item active" data-tab="tasks">
+        <span class="nav-icon">☑</span>
+        <span>Tasks</span>
+      </button>
+      <button type="button" class="nav-item" data-tab="todo">
+        <span class="nav-icon">📝</span>
+        <span>To-Do</span>
+      </button>
+      <button type="button" class="nav-item" data-tab="graph">
+        <span class="nav-icon">📈</span>
+        <span>Graph</span>
+      </button>
+      <button type="button" class="nav-item" data-tab="rank">
+        <span class="nav-icon">🏆</span>
+        <span>Rank</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Focus / Pomodoro Timer Modal -->
+  <div class="modal-backdrop hidden" id="timerModal">
+    <div class="modal-card timer-modal-card">
+      <span class="modal-eyebrow">⏱️ FOCUS TIMER</span>
+      <h3 id="timerTaskTitle">Study 30min</h3>
+      <div class="timer-display" id="timerClockDisplay">30:00</div>
+      <p class="muted">Finishing auto-checks today's box & awards +25 XP!</p>
+      <div class="timer-btn-row">
+        <button type="button" class="btn-add-solid" id="timerStartPauseBtn">▶ Start</button>
+        <button type="button" class="btn-ghost-sm" id="timerResetBtn">↺ Reset</button>
+        <button type="button" class="btn-ghost-sm" id="timerCloseBtn">✕ Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full-Screen Rank-Up Celebration Modal -->
+  <div class="modal-backdrop hidden" id="rankUpModal">
+    <div class="modal-card rankup-modal-card">
+      <span class="modal-eyebrow">PROMOTION UNLOCKED!</span>
+      <div class="rankup-big-icon" id="rankUpIcon">👑</div>
+      <h2 id="rankUpNewTitle">Grand Master</h2>
+      <p id="rankUpSubtitle">Your discipline just reached a new tier!</p>
+      <button type="button" class="btn-add-solid" id="closeRankUpBtn" style="width:100%; margin-top:16px;">
+        Continue Grinding 🔥
+      </button>
+    </div>
+  </div>
+
+  <!-- Shareable Weekly Report Card Modal -->
+  <div class="modal-backdrop hidden" id="reportCardModal">
+    <div class="modal-card">
+      <div class="section-header">
+        <h3>Weekly Report Card</h3>
+        <button type="button" class="icon-btn" id="closeReportModalBtn">✕</button>
+      </div>
+      <canvas id="reportCardCanvas" width="720" height="900" class="report-preview-canvas"></canvas>
+      <div class="timer-btn-row" style="margin-top:12px;">
+        <button type="button" class="btn-add-solid" id="shareReportImageBtn">📤 Share / Post</button>
+        <button type="button" class="btn-ghost-sm" id="downloadReportImageBtn">⬇ Save PNG</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings, Notifications, Themes & Backup Modal -->
+  <div class="modal-backdrop hidden" id="settingsModal">
+    <div class="modal-card settings-modal-card">
+      <div class="section-header">
+        <h3>⚙️ Command Center</h3>
+        <button type="button" class="icon-btn" id="closeSettingsBtn">✕</button>
+      </div>
+
+      <div class="settings-block">
+        <label class="field-group">
+          <span>Your Name (Leaderboard & Report Card)</span>
+          <div class="composer-row">
+            <input type="text" id="userNameInput" placeholder="Enter your name..." maxlength="24" />
+            <button type="button" class="btn-add-solid" id="saveUserNameBtn">Save</button>
+          </div>
+        </label>
+      </div>
+
+      <div class="settings-block">
+        <span class="settings-label">🔔 Notifications (Streak Ending & 1-Day Overdue To-Dos)</span>
+        <div class="composer-row">
+          <input type="time" id="dailyReminderTimeInput" value="20:00" />
+          <button type="button" class="btn-add-solid" id="enableNotifBtn">Allow & Save</button>
+          <button type="button" class="btn-ghost-sm" id="testNotifBtn">Test</button>
+        </div>
+        <p class="muted" id="notifStatusText" style="margin-top:6px;">
+          Sends Streak-Ending alerts before 12:01 AM & alerts when any To-Do crosses 1 day.
+        </p>
+      </div>
+
+      <div class="settings-block">
+        <span class="settings-label">App Theme, Contrast & Sound</span>
+        <div class="theme-btn-row">
+          <button type="button" class="theme-choice" data-theme-val="oled">🖤 Pure Black</button>
+          <button type="button" class="theme-choice" data-theme-val="aurora">🌑 Dark Grey</button>
+          <button type="button" class="theme-choice" data-theme-val="light">🤍 Crisp White</button>
+        </div>
+        <div class="accent-row-between" style="margin-top:10px;">
+          <div class="accent-swatches">
+            <button type="button" class="swatch-btn" data-accent-val="mono" style="background:#ffffff;" aria-label="White"></button>
+            <button type="button" class="swatch-btn" data-accent-val="silver" style="background:#a3a3a3;" aria-label="Silver"></button>
+            <button type="button" class="swatch-btn" data-accent-val="slate" style="background:#737373;" aria-label="Slate"></button>
+            <button type="button" class="swatch-btn" data-accent-val="charcoal" style="background:#404040;" aria-label="Charcoal"></button>
+            <button type="button" class="swatch-btn" data-accent-val="obsidian" style="background:#171717;" aria-label="Obsidian"></button>
+          </div>
+          <button type="button" class="btn-ghost-sm" id="toggleSoundBtn">🔊 Sound: ON</button>
+        </div>
+      </div>
+
+      <div class="settings-block">
+        <span class="settings-label">🔥 Streak & Shield Vault</span>
+        <p class="muted">
+          Longest Streak Ever: <strong id="longestStreakStat">1</strong> days •
+          Monthly Freezes Left: <strong id="freezeVaultStat">1</strong> •
+          Quotes Loaded: <strong id="totalQuotesStat">520</strong>
+        </p>
+      </div>
+
+      <div class="settings-block">
+        <span class="settings-label">📦 Archived Habits</span>
+        <div id="archivedHabitsList" class="archived-list"></div>
+      </div>
+
+      <div class="settings-block">
+        <span class="settings-label">💾 Backup, Restore & Friend Sync Code</span>
+        <div class="timer-btn-row">
+          <button type="button" class="btn-ghost-sm" id="exportJsonBtn">⬇ Export JSON</button>
+          <label class="btn-ghost-sm" style="cursor:pointer;">
+            ⬆ Import JSON
+            <input type="file" id="importJsonInput" accept=".json" class="hidden" />
+          </label>
+        </div>
+        <div class="timer-btn-row" style="margin-top:8px;">
+          <button type="button" class="btn-ghost-sm" id="copySyncCodeBtn">🔗 Copy Friend Code</button>
+          <button type="button" class="btn-ghost-sm" id="loadSyncCodeBtn">📥 Paste Friend Code</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Undo Toast -->
+  <div class="toast-bar hidden" id="toastBar">
+    <span id="toastMessage">Done!</span>
+    <button type="button" class="toast-undo-btn hidden" id="toastUndoBtn">Undo</button>
+  </div>
+
+  <script src="quotes.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

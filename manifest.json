@@ -2,11 +2,11 @@
   "name": "Discipline — Habit, To-Do & Rank Tracker",
   "short_name": "Discipline",
   "description": "7-day habit tracker, numbered To-Do list, focus timers, offline analytics graphs, and rank divisions.",
-  "start_url": "./index.html?mode=app",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#080912",
-  "theme_color": "#080912",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
   "orientation": "portrait",
   "icons": [
     {
